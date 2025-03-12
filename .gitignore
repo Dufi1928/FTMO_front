@@ -29,5 +29,5 @@ coverage
 
 .idea/
 /.idea
-
+.vscode
 *.tsbuildinfo
