@@ -1,6 +1,14 @@
-import './assets/main.css'
+// src/main.js
+import { createSSRApp, h } from 'vue'
 
-import { createApp } from 'vue'
-import App from './App.vue'
+export function createApp(Page, pageProps) {
+    const app = createSSRApp({
+        render: () => h(Page, pageProps),
+    })
 
-createApp(App).mount('#app')
+    function App() {
+        return h(Page, pageProps || {})
+    }
+
+    return createSSRApp(App)
+}
