@@ -1,5 +1,6 @@
 <script setup>
 import Header from '../components/Header/Header.vue'
+import SectionHeader from '../components/SectionHeader/SectionHeader.vue'
 import './index.css'
 </script>
 
@@ -31,5 +32,10 @@ import './index.css'
     <div class="images-grid-container">
         <img src="../assets/images/grid.jpg" alt="">
     </div>
+    <SectionHeader 
+    title="Les clubs près de chez vous"
+    linkText="Tous les clubs"
+    linkUrl="/clubs"
+    />
 </template>
 

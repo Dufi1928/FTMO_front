@@ -1,0 +1,38 @@
+.section-header {
+    width: 100%;
+    padding: 2rem 0;
+  }
+  
+  .section-header .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .section-title {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 3rem;
+    color: #000;
+  }
+  
+  .section-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #3138AA;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .section-link img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .section-link:hover {
+    text-decoration: underline;
+  }
+  
