@@ -1,7 +1,16 @@
 <script setup>
 import Header from '../components/Header/Header.vue'
 import SectionHeader from '../components/SectionHeader/SectionHeader.vue'
+import CityCircle from '../components/CityCircle/CityCircle.vue'
 import './index.css'
+
+const cities = [
+  { image: 'src/assets/images/deulemont.jpeg', name: 'Deulemont' },
+  { image: 'src/assets/images/deulemont.jpeg', name: 'Verlinghem' },
+  { image: 'src/assets/images/deulemont.jpeg', name: 'Wez-Macquart' },
+  { image: 'src/assets/images/deulemont.jpeg', name: 'Capinghem' }
+  // Ajoute plus de données fictives ici
+]
 </script>
 
 
@@ -37,5 +46,17 @@ import './index.css'
     linkText="Tous les clubs"
     linkUrl="/clubs"
     />
+    <div class="cities-container">
+    <button class="nav-button left-button">‹</button>
+    <div class="cities-wrapper">
+      <CityCircle
+        v-for="(city, index) in cities"
+        :key="index"
+        :image="city.image"
+        :name="city.name"
+      />
+    </div>
+    <button class="nav-button right-button">›</button>
+  </div>
 </template>
 

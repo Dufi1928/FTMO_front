@@ -109,3 +109,37 @@
     width: 100%;
 
 }
+.cities-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+.cities-wrapper {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+}
+  
+.nav-button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: absolute;
+    z-index: 10;
+}
+  
+.left-button {
+    left: -60px;
+}
+  
+.right-button {
+    right: -60px;
+}
