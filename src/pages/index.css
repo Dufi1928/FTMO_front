@@ -32,7 +32,7 @@
     margin: auto;
     display: flex;
     color: white;
-    width: 70%;
+    width: 80%;
     flex-direction: column;
     height: 100%;
     justify-content: center;
@@ -69,20 +69,22 @@
     display: flex;
 }
 
-.our-history-content{
+.our-history-content {
     justify-content: center;
     align-items: center;
     padding: 30px 0;
-    width: 70%;
+    width: 80%;
 }
-.our-history-content-title{
+
+.our-history-content-title {
     font-family: "Bebas Neue", sans-serif;
     margin: auto;
     width: 100%;
     font-size: 3rem;
     text-align: center;
 }
-.our-history-content-content{
+
+.our-history-content-content {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -90,56 +92,204 @@
     line-height: 2;
     color: rgba(109, 110, 113, 1);
     text-align: center;
-    margin: 30px 0  ;
+    margin: 30px 0;
     font-family: "Lato", sans-serif;
 }
-.our-history-content-content-cta{
+
+.our-history-content-content-cta {
     font-family: "Lato", sans-serif;
     font-size: 1rem;
     display: block;
     width: 100px;
     margin: 0 auto;
-    padding:18px 48px ;
+    padding: 18px 48px;
     color: white;
     border-radius: 8px;
     text-decoration: none;
     background-color: rgba(220, 38, 38, 1);
 }
-.images-grid-container{
-    width: 100%;
 
+.images-grid-container {
+    overflow: hidden;
+    width: 100%;
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 }
+.clubs-container{
+    width: 100%;
+    background-color: #F9F9F9;
+    padding-bottom: 50px;
+}
+
 .cities-container {
+    position: relative;
     display: flex;
     align-items: center;
-    position: relative;
-  }
-  
+    overflow: hidden;
+    width: 100%;
+}
+.city-slider-container{
+    padding-left: 10%;
+    padding-right: 10%;
+    margin-bottom: 30px;
+    overflow: hidden;
+    align-items: center;
+    background-color: #F9F9F9;
+}
+.city-slider-container1{
+    height: 200px;
+    background: white;
+}
+.city-slider-container .splide__track{
+    overflow: visible !important; /* force l’overflow */
+}
 .cities-wrapper {
     display: flex;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    max-width: 1200px;
+    padding: 1rem;
+    scrollbar-width: none; /* Firefox */
 }
-  
-.nav-button {
-    background-color: #000;
-    color: #fff;
+.cities-wrapper > * {
+    flex: 0 0 calc(25% - 0.75rem); /* 4 éléments par ligne avec l'écart */
+}
+
+.cities-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.splide__arrow {
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
     border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: absolute;
+    font-size: 1rem;
+    color: #333;
     z-index: 10;
 }
-  
-.left-button {
-    left: -60px;
+.splide__arrow:disabled{
+    display: none;
 }
-  
-.right-button {
-    right: -60px;
+
+.splide__arrow--prev {
+    left: -1.5rem;
 }
+
+.splide__arrow--next {
+    right: -1.5rem;
+}
+.splide__arrow:hover {
+    color: #000;
+    cursor: pointer;
+}
+.ranking-table-container{
+    width:100%;
+    margin-top:30px;
+    display:flex;
+    flex-direction:column;
+    background:#F9F9F9;
+    padding-bottom:30px;
+    overflow:hidden;
+}
+
+/* wrapper : on donne 1 px de marge intérieur = espace pour la bordure */
+.ranking-table-wrapper{
+    width:80%;
+    margin:auto;
+    padding:1px;                 /* ← espace pour la bordure */
+    background:#F9F9F9;          /* même gris que le contour */
+    border-radius:10px;
+}
+
+/* tableau */
+.ranking-table-content{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border-radius:10px;
+    overflow:hidden;
+    font-family:Inter, sans-serif;
+}
+
+/* cellules */
+.ranking-table-content th,
+.ranking-table-content td{
+    padding:18px 24px;
+    text-align:left;
+    font-size:15px;
+}
+
+/* entête + pied */
+.ranking-table-content thead,
+.ranking-table-content tfoot{
+    background:#FCFCFC;
+    font-weight:600;
+}
+
+/* séparateur lignes corps */
+.ranking-table-content tbody tr:not(:last-child){
+    border-bottom:1px solid #f0f0f0;
+}
+
+
+/* Badge de rang */
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    font-weight: 600;
+}
+.gold   { background: #FFF4BD; }
+.silver { background: #E6E6E6; }
+.bronze { background: #FAEBC8; }
+.rank-badge:not(.gold):not(.silver):not(.bronze) {
+    background: #f5f5f5;
+}
+
+/* Couleurs colonnes */
+.won       { color: #12B221; font-weight: 600; }
+.lost      { color: #D11B1B; font-weight: 600; }
+.positive  { color: #12B221; font-weight: 600; }
+.negative  { color: #D11B1B; font-weight: 600; }
+
+/* Lien bas de tableau */
+.ranking-footer{
+    background-color: #FCFCFC;
+    text-align:center;      /* centre le contenu */
+    padding:16px 0;         /* même espacement que le mockup */
+}
+
+/* le lien occupe toute la largeur ⇒ auto-centré */
+.ranking-footer .full-ranking-link{
+    width: 100%;
+    text-align: center;
+    display:block;          /* ← occupe 100 % de la cellule */
+    color: #2436d4;/* ou la couleur de ton lien */
+    font-weight:600;
+    text-decoration:none;
+}
+
+.ranking-footer .full-ranking-link:hover{
+    text-decoration:underline;
+}
+
+.full-ranking-link {
+    color: #2436d4;
+    font-weight: 600;
+    text-decoration: none;
+}
+.full-ranking-link:hover {
+    text-decoration: underline;
+}
+
+
+
