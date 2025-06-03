@@ -53,6 +53,7 @@ watch(mobileOpen, open => {
                 <a href="#"><img src="../../assets/icons/calendar-lines 1.svg"/>Calendrier</a>
                 <a href="#"><img src="../../assets/icons/question-mark-circle 1.svg"/>À propos</a>
                 <a href="#"><img src="../../assets/icons/chat-lines 1.svg"/>Contact</a>
+                <a href="/login">Connexion</a>
             </nav>
         </div>
 
@@ -79,6 +80,7 @@ watch(mobileOpen, open => {
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/calendar-lines 1.svg" />Calendrier</a>
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/question-mark-circle 1.svg" />À propos</a>
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/chat-lines 1.svg" />Contact</a>
+                <a @click="closeMobile" href="/login">Connexion</a>
             </nav>
         </div>
     </header>
