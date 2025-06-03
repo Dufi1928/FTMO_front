@@ -1,0 +1,78 @@
+:root{
+    --c-footer-bg:#081824;   /* bleu-gris foncé */
+    --c-footer-txt:#ffffff;
+    --c-footer-txt-s:#d4dadd;/* texte secondaire */
+    --c-footer-link:#fff;    /* liens “courants” */
+    --c-footer-link-h:#86a1ff;
+    --c-footer-accent:#86a1ff;
+}
+
+/* ========= structure générale ========= */
+.site-footer{
+    background:var(--c-footer-bg);
+    color:var(--c-footer-txt);
+    padding:60px 0 40px;
+    font-family:Lato, sans-serif;
+    line-height:1.5;
+    font-size:0.95rem;
+}
+.footer-inner{
+    width:80%;
+    max-width:1440px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    gap:120px;               /* espace entre colonnes */
+}
+.footer-left{
+    display:flex;
+    gap:64px;
+    flex-direction: column;
+}
+
+/* ========= logo ========= */
+.footer-logo img{height:40px;display:block;margin-bottom:40px}
+
+/* ========= navigation ========= */
+.footer-nav{list-style:none;padding:0;margin:0}
+.footer-nav li+li{margin-top:18px}
+.footer-nav a{
+    color:var(--c-footer-link);
+    text-decoration:none;
+    display:flex;align-items:center;gap:10px;
+    transition:color .2s;
+}
+.footer-nav a:hover{color:var(--c-footer-link-h)}
+.footer-nav img{width:20px;height:20px}
+
+/* ========= social ========= */
+.follow-title{font-weight:700;margin-bottom:20px}
+.social-links{display:flex;gap:20px}
+.social-links a{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border:2px solid var(--c-footer-txt);
+    border-radius:50%;transition:background .2s,border-color .2s;
+}
+.social-links a img{width:18px;height:18px;filter:invert(1)}
+.social-links a:hover{
+    background:var(--c-footer-accent);border-color:var(--c-footer-accent);
+}
+
+/* ========= bas de page ========= */
+.footer-bottom{
+    width:80%;max-width:1440px;
+    margin:40px auto 0;
+    display:flex;flex-wrap:wrap;gap:28px;
+    font-size:0.9rem;color:var(--c-footer-txt-s);
+}
+.footer-bottom a{
+    color:var(--c-footer-txt-s);text-decoration:none;
+}
+.footer-bottom a:hover{color:var(--c-footer-link-h);text-decoration:underline}
+
+/* ========= responsive ========= */
+@media(max-width:900px){
+    .footer-inner{flex-direction:column;gap:48px}
+    .footer-left{flex-direction:column;gap:24px}
+    .footer-logo img{margin-bottom:24px}
+}

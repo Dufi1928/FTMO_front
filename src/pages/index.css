@@ -1,28 +1,22 @@
-.hero-banner {
-    z-index: 0;
-    top: 0;
-    position: absolute;
-    height: 100%;
-    width: 100vw;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
+/*Hero Section START */
+.hero-banner{
+    inset:0;                    /* colle aux 4 bords                            */
+    height:100svh;              /* hauteur = viewport visible (≃ 100 vh)        */
+    min-height:250px;           /* garde-fou sur très petits écrans             */
+    display:flex;
+    background-image:url("../assets/images/hero-desktop.png");
+    background-size:cover;      /* couvre toute la surface                      */
+    background-position:center bottom; /* on garde le bas de l’image visible   */
+    background-repeat:no-repeat;
 }
 
-.hero-banner img {
-    max-width: 100%;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    object-fit: cover;
-}
+
 
 .hero-content-container {
     position: relative;
     z-index: 0;
     width: 100%;
-    height: calc(100vh - 87px);
+    height:100vh;
     justify-content: center;
     font-family: "Bebas Neue", sans-serif;
     font-weight: 400;
@@ -61,9 +55,26 @@
     margin-bottom: 90px;
 }
 
+@media (max-width:768px){
+    .hero-banner{
+        background-image:url("../assets/images/hero-mobile.jpg");
+        background-position:center center;     /* recadre différemment si besoin */
+    }
+    .hero-content-title{
+        font-size: 3rem;
+        width: 100%;
+    }
+}
+
+/*Hero Section END */
+
+
+
+
+
+
 .our-history-container {
     width: 100%;
-    height: 500px;
     align-items: center;
     justify-content: center;
     display: flex;
@@ -72,7 +83,7 @@
 .our-history-content {
     justify-content: center;
     align-items: center;
-    padding: 30px 0;
+    padding: 50px 0;
     width: 80%;
 }
 
@@ -92,7 +103,6 @@
     line-height: 2;
     color: rgba(109, 110, 113, 1);
     text-align: center;
-    margin: 30px 0;
     font-family: "Lato", sans-serif;
 }
 
@@ -108,6 +118,13 @@
     text-decoration: none;
     background-color: rgba(220, 38, 38, 1);
 }
+
+@media (max-width:768px){
+    .our-history-content-title {
+        font-size: 2.5rem;
+    }
+}
+
 
 .images-grid-container {
     overflow: hidden;
@@ -139,10 +156,6 @@
     align-items: center;
     background-color: #F9F9F9;
 }
-.city-slider-container1{
-    height: 200px;
-    background: white;
-}
 .city-slider-container .splide__track{
     overflow: visible !important; /* force l’overflow */
 }
@@ -166,12 +179,27 @@
 .splide__arrow {
     top: 50%;
     transform: translateY(-50%);
-    background: none;
     border: none;
     font-size: 1rem;
-    color: #333;
+    color: white;
     z-index: 10;
+    opacity: 100;
 }
+.splide__arrow--next , .splide__arrow--prev{
+    background: black  !important;
+    opacity: 100 !important;
+    svg{
+        fill: white !important;
+    }
+}
+.splide__arrow--next:hover, .splide__arrow--prev:hover {
+    background: #696969 !important;
+    svg{
+        fill: white !important;
+    }
+}
+
+
 .splide__arrow:disabled{
     display: none;
 }
@@ -187,109 +215,171 @@
     color: #000;
     cursor: pointer;
 }
+
+
+
+:root{
+    --c-bg-wrapper:#F9F9F9;
+    --c-bg-table:#ffffff;
+    --c-bg-head:#FCFCFC;
+    --c-text-link:#2436d4;
+    --c-badge-gold:#FFF4BD;
+    --c-badge-silver:#E6E6E6;
+    --c-badge-bronze:#FAEBC8;
+    --fs-body:15px;
+    --pad-cell:18px 24px;
+    --width-pinned:160px;        /* largeur de la colonne “Club”      */
+    --min-width-mobile:720px;    /* largeur min du tableau scrollable */
+    font-family:Lato, sans-serif;
+    --row-h:72px;
+}
+
+/* ========== CONTENEUR GLOBAL ========== */
 .ranking-table-container{
     width:100%;
     margin-top:30px;
     display:flex;
     flex-direction:column;
-    background:#F9F9F9;
+    background:var(--c-bg-wrapper);
     padding-bottom:30px;
     overflow:hidden;
 }
+.ranking-left{
+    border-radius: 10px 0  0 10px;
+}
+.ranking-main{
+    border-radius: 0 10px  10px 0;
+}
 
-/* wrapper : on donne 1 px de marge intérieur = espace pour la bordure */
 .ranking-table-wrapper{
+    box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+    position:relative;           /* contexte pour la table clonée     */
     width:80%;
     margin:auto;
-    padding:1px;                 /* ← espace pour la bordure */
-    background:#F9F9F9;          /* même gris que le contour */
+    background:var(--c-bg-wrapper);
     border-radius:10px;
 }
+.ranking-table tr          { height:var(--row-h); }
+.ranking-table th,
+.ranking-table td          { height:100%; line-height:calc(var(--row-h) - 2*0.7rem); }
 
-/* tableau */
-.ranking-table-content{
+/* ========== TABLE COMMUNE (visuel desktop) ========== */
+.ranking-table{
     width:100%;
     border-collapse:collapse;
-    background:#fff;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    border-radius:10px;
+    background:var(--c-bg-table);
+    box-shadow:0 1px 4px rgb(0 0 0 / .16);
     overflow:hidden;
-    font-family:Inter, sans-serif;
 }
 
-/* cellules */
-.ranking-table-content th,
-.ranking-table-content td{
-    padding:18px 24px;
+
+.ranking-table th,
+.ranking-table td{
+    padding:var(--pad-cell);
     text-align:left;
-    font-size:15px;
+    font-size:var(--fs-body);
 }
 
-/* entête + pied */
-.ranking-table-content thead,
-.ranking-table-content tfoot{
-    background:#FCFCFC;
+.ranking-table thead,
+.ranking-table tfoot{
+    background:var(--c-bg-head);
     font-weight:600;
 }
+.ranking-main th{
+    white-space:nowrap;            /* pas de retour à la ligne          */
+    overflow:hidden; text-overflow:ellipsis;
+}
 
-/* séparateur lignes corps */
-.ranking-table-content tbody tr:not(:last-child){
+.ranking-table tbody tr:not(:last-child){
     border-bottom:1px solid #f0f0f0;
 }
 
-
-/* Badge de rang */
-.rank-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    font-weight: 600;
+/* ­— badges classement — */
+.rank-badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:46px;height:46px;border-radius:50%;font-weight:600;
 }
-.gold   { background: #FFF4BD; }
-.silver { background: #E6E6E6; }
-.bronze { background: #FAEBC8; }
-.rank-badge:not(.gold):not(.silver):not(.bronze) {
-    background: #f5f5f5;
-}
+.gold   {background:var(--c-badge-gold);}
+.silver {background:var(--c-badge-silver);}
+.bronze {background:var(--c-badge-bronze);}
+.rank-badge:not(.gold):not(.silver):not(.bronze){background:#f5f5f5}
 
-/* Couleurs colonnes */
-.won       { color: #12B221; font-weight: 600; }
-.lost      { color: #D11B1B; font-weight: 600; }
-.positive  { color: #12B221; font-weight: 600; }
-.negative  { color: #D11B1B; font-weight: 600; }
+/* ­— valeurs + / – — */
+.won,.positive   {color:#12B221;font-weight:600;}
+.lost,.negative  {color:#D11B1B;font-weight:600;}
 
-/* Lien bas de tableau */
+/* ­— footer lien complet — */
 .ranking-footer{
-    background-color: #FCFCFC;
-    text-align:center;      /* centre le contenu */
-    padding:16px 0;         /* même espacement que le mockup */
+    background:var(--c-bg-head);
+    text-align:center;
+    padding:16px 0;
+}
+.full-ranking-link{
+    display:block;width:100%;
+    color:var(--c-text-link);font-weight:600;text-decoration:none;
+}
+.full-ranking-link:hover{text-decoration:underline}
+
+/* ========== CLONE / SCROLL PATTERN ========== */
+/* bloc figé (clone) */
+.rank-pinned{
+    position:absolute;
+    inset:0 auto 0 0;            /* colle à gauche */
+    width:var(--width-pinned);
+    overflow:hidden;
+    z-index:2;                   /* passe au-dessus du scroll */
+    border-radius:10px 0 0 0; /* conserve l’arrondi gauche */
 }
 
-/* le lien occupe toute la largeur ⇒ auto-centré */
-.ranking-footer .full-ranking-link{
-    width: 100%;
-    text-align: center;
-    display:block;          /* ← occupe 100 % de la cellule */
-    color: #2436d4;/* ou la couleur de ton lien */
-    font-weight:600;
-    text-decoration:none;
+/* bloc scrollable */
+.rank-scroll{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    margin-left:var(--width-pinned);
+    border-radius:0 10px 10px 0; /* arrondi droit uniquement */
 }
 
-.ranking-footer .full-ranking-link:hover{
-    text-decoration:underline;
+/* ========== RESPONSIVE  (mobile < 768 px) ========== */
+@media(max-width:767px){
+    .ranking-table-wrapper{}
+
+    /* le wrapper passe 100 % et enlève l’ombre (optionnel) */
+    .ranking-table-wrapper{width:80%;}
+
+    /* scroll toujours possible sur la partie droite         */
+    .rank-scroll{margin-left:var(--width-pinned)}
+
+    /* table à largeur minimale pour forcer le scroll         */
+    .ranking-table{min-width:var(--min-width-mobile)}
+
+    /* compacte un peu les cellules (sauf la première)        */
+    .rank-scroll th,
+    .rank-scroll td{
+        /*padding:14px 18px;*/
+        white-space:nowrap;
+    }
 }
 
-.full-ranking-link {
-    color: #2436d4;
-    font-weight: 600;
-    text-decoration: none;
+/* ========== ACCESSIBILITÉ / DÉGRADÉ — pas obligatoire ========== */
+.rank-pinned table,
+.rank-pinned th,
+.rank-pinned td{                     /* désactive la sélection dans le clone   */
+    pointer-events:none;
 }
-.full-ranking-link:hover {
-    text-decoration: underline;
+
+
+
+.ranking-table td{
+    white-space:nowrap;            /* pas de retour à la ligne          */
+    overflow:hidden; text-overflow:ellipsis; /* “…” si ça dépasse       */
 }
+
+
+
+
+/*footer section start*/
+
+
 
 
 

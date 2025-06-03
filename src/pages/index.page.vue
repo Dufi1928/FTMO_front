@@ -7,6 +7,7 @@ import './index.css'
 import '@splidejs/vue-splide/css'
 import {Splide, SplideSlide} from '@splidejs/vue-splide'
 import MatchCard from "@/components/MatchCard/MatchCard.vue";
+import Footer from "@/components/Footer/Footer.vue";
 
 
 const cities = ref([])
@@ -31,21 +32,22 @@ const ranking = ref([
     {rank: 5, club: 'Deulemont', teamNo: 2, points: 2, won: 39, lost: 54, diff: -15}
 ])
 
+
 </script>
 
 
 <template>
     <Header/>
     <div class="hero-banner">
-        <img src="../assets/images/section-hero.png" alt="">
-    </div>
-    <div class="hero-content-container">
-        <div class="hero-content">
-            <h1 class="hero-content-title">Le Tennis de table dans
-                la Métropole Lilloise</h1>
-            <a class="hero-content-cta" href="#">Découvrez nos clubs</a>
+        <div class="hero-content-container">
+            <div class="hero-content">
+                <h1 class="hero-content-title">Le Tennis de table dans
+                    la Métropole Lilloise</h1>
+                <a class="hero-content-cta" href="#">Découvrez nos clubs</a>
+            </div>
         </div>
     </div>
+
     <div class="our-history-container">
         <div class="our-history-content">
             <h2 class="our-history-content-title">Notre histoire, notre force</h2>
@@ -89,7 +91,7 @@ const ranking = ref([
 
     <div class="city-slider-container" style="background: white">
         <Splide
-            :options="{ perPage: 3, arrows: true, gap: '1rem', pagination: false, focus: 'left',trimSpace: true, perMove: 1, breakpoints: { 1024: { perPage: 2 }, 640: { perPage: 1 } } }">
+            :options="{ perPage: 3, arrows: true, gap: '1rem', pagination: false, focus: 'left',trimSpace: true, perMove: 1, breakpoints: { 1124: { perPage: 2 }, 640: { perPage: 1 } } }">
             <SplideSlide v-for="(city, i) in cities" :key="i">
                 <MatchCard details-url="https://google.fr" venue="Salle Victor Hugo, Lille" match-time="14h30"
                            match-date="23 Avril 2025" away-logo="src/assets/images/deulemont.jpeg" away-name="Deulemont"
@@ -100,71 +102,62 @@ const ranking = ref([
 
     <div class="ranking-table-container">
         <SectionHeader
-            background='#F9F9F9'
+            background="#F9F9F9"
             title="Classement des Équipes"
             linkText="Voir le classement complet"
             linkUrl="/clubs"
         />
 
-        <div class="ranking-table-wrapper">
-            <table class="ranking-table-content">
-                <thead>
-                <tr>
-                    <th>Classement</th>
-                    <th>Club</th>
-                    <th>Numéro d’équipe</th>
-                    <th>Points</th>
-                    <th>Sets gagnés</th>
-                    <th>Sets perdus</th>
-                    <th>Différence</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="row in ranking" :key="row.rank">
-                    <!-- Cercle de rang avec couleur médaille -->
-                    <td>
-        <span
-            class="rank-badge"
-            :class="{
-            gold:   row.rank === 1,
-            silver: row.rank === 2,
-            bronze: row.rank === 3
-          }"
-        >
-          {{ row.rank }}
-        </span>
-                    </td>
+        <div class="ranking-table-wrapper" id="rank-scroll">
+            <!-- table fixe (colonne Club) -->
+            <div class="rank-pinned">
+                <table class="ranking-table ranking-left">
+                    <thead>
+                    <tr><th>Club</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="row in ranking" :key="row.rank">
+                        <td>{{ row.club }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- table scrollable -->
+            <div class="rank-scroll">
+                <table class="ranking-table ranking-main">
+                    <thead>
+                    <tr>
+                        <th>Classement</th>
+                        <th>Points</th>
+                        <th>Sets gagnés</th>
+                        <th>Sets perdus</th>
+                        <th>Différence</th>
+                    </tr>
+                    </thead>
 
-                    <td>{{ row.club }}</td>
-                    <td>{{ row.teamNo }}</td>
-                    <td>{{ row.points }}</td>
-                    <td class="won">{{ row.won }}</td>
-                    <td class="lost">{{ row.lost }}</td>
-                    <td :class="{ positive: row.diff > 0, negative: row.diff < 0 }">
-                        {{ row.diff > 0 ? '+' + row.diff : row.diff }}
-                    </td>
-                </tr>
+                    <tbody>
+                    <tr v-for="row in ranking" :key="row.rank">
+                        <td>
+            <span class="rank-badge"
+                  :class="{ gold:row.rank===1, silver:row.rank===2, bronze:row.rank===3 }">
+              {{ row.rank }}
+            </span>
+                        </td>
+                        <td>{{ row.points }}</td>
+                        <td class="won">{{ row.won }}</td>
+                        <td class="lost">{{ row.lost }}</td>
+                        <td :class="{ positive:row.diff>0, negative:row.diff<0 }">
+                            {{ row.diff>0? '+'+row.diff : row.diff }}
+                        </td>
+                    </tr>
+                    </tbody>
 
-                </tbody>
-                <tfoot>
-                <tr>
-                    <td class="ranking-footer" colspan="7">
-                        <a href="/classement" class="full-ranking-link">
-                            Voir le classement complet
-                        </a>
-                    </td>
-                </tr>
-                </tfoot>
-            </table>
+                </table>
+            </div>
         </div>
-
-
     </div>
+    <Footer/>
 
-
-    <div class="city-slider-container1">
-
-    </div>
 
 </template>
 

@@ -1,65 +1,201 @@
-body, html {
+/* =============== RÉGLAGES GÉNÉRAUX =============== */
+html, body {
     margin: 0;
     padding: 0;
     width: 100vw;
     min-height: 100vh;
-    box-sizing: border-box;
-}
-::-webkit-scrollbar {
-    display: none;
+    box-sizing: border-box; /* évite les surprises de padding */
 }
 
+::-webkit-scrollbar {
+    display: none
+}
+
+/* scrollbar cachée */
+
+/* =============== BARRE HEADER =============== */
 .header {
-    position: sticky;
-    top: 0;
-    z-index: 99999;
-    width: 100%;
-    display: flex;
+    position: fixed; /* couvre toute la largeur */
+    inset: 0 0 auto 0; /* top:0 + width:100% */
     height: 75px;
+    display: flex;
     justify-content: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, .3);
+    z-index: 99999;
+    overflow: hidden; /* empêche la nav desktop de “déborder” */
+    background: transparent; /* fond initial (hero visible) */
+    transition: background .25s;
 }
 
 .header.scrolled,
-.header:hover{
-    background-color: rgba(0, 0, 0, 1);
-    .container, .nav a{
-        color: white;
-    }
+.header:hover {
+    background: #000; /* fond noir dès qu’on scrolle/survole */
 }
 
+/* =============== CONTENEUR INTÉRIEUR =============== */
 .container {
     width: 80%;
+    max-width: 1440px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
+/* =============== LOGO =============== */
+.logo img {
+    display: block;
+    height: 42px
 }
 
-.nav{
+/* =============== NAVIGATION DESKTOP =============== */
+.nav {
     display: flex;
     width: 60%;
     justify-content: space-evenly;
 }
+
 .nav a {
     display: flex;
-    justify-content: space-between;
     gap: 10px;
     align-items: center;
-    font-size: 1rem;
-    font-family: "Lato", sans-serif;
-    font-weight: 400;
-    margin-left: 1rem;
+    font: 400 1rem/1 'Lato', sans-serif;
     text-decoration: none;
-    color: white;
-    transition: color 0.2s;
+    color: #fff;
+    transition: color .2s;
 }
 
-.nav a:hover, .nav a.img:hover {
+.nav a:hover {
     color: #007bff;
+    cursor: pointer
+}
+
+/* =============== BOUTON BURGER (caché desktop) =============== */
+.burger {
+    display: none
+}
+
+/* ================= BREAK-POINT MOBILE  < 768 px ================ */
+@media (max-width: 767px) {
+
+    /* --- on masque la nav desktop et on montre le burger --- */
+    .nav {
+        display: none !important
+    }
+
+    .burger {
+        display: flex !important;
+        position: fixed; /* reste en haut quand le panneau glisse */
+        top: 22px;
+        right: 22px;
+        z-index: 99999;
+    }
+
+    /* --- backdrop plein écran --- */
+    .mobile-backdrop {
+        cursor:pointer;
+        position: fixed;
+        inset: 0;
+        z-index: 99998;
+        background: rgba(0, 0, 0, .4);
+        backdrop-filter: blur(2px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .25s;
+    }
+
+    .mobile-backdrop.show {
+        opacity: 1;
+        visibility: visible
+    }
+
+    /* --- panneau latéral --- */
+    .mobile-panel{
+        position:absolute;
+        top:0;
+        left:-100%;
+        width:94%;
+        height:100%;
+        padding: calc(env(safe-area-inset-top) + 16px) 24px 40px;
+        display:flex;
+        flex-direction:column;
+        gap:32px;
+        justify-content:flex-start;
+        background:#000;
+        transition:left .35s cubic-bezier(.4,0,.2,1);
+    }
+
+    .mobile-panel.show {
+        left: 0
+    }
+
+    .mobile-panel a {
+        color: #fff;
+        text-decoration: none;
+        font: 500 1.05rem/1 'Lato', sans-serif;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .mobile-panel a:hover {
+        color: #007bff
+    }
+}
+
+/* =============== BURGER : STYLE + ANIMATION “X” =============== */
+.burger {
+    flex-direction: column;
+    gap: 5px;
+    width: 28px;
+    height: 24px;
+    background: transparent;
+    border: 0;
     cursor: pointer;
 }
+
+.burger span {
+    width: 100%;
+    height: 3px;
+    border-radius: 3px;
+    background: #fff;
+    transition: transform .3s, opacity .3s;
+}
+
+.burger.open {
+    display: none !important;
+}
+
+
+/* ===== cache systématiquement le menu mobile en mode desktop ===== */
+@media (min-width: 768px) {
+    .mobile-backdrop,
+    .mobile-panel {
+        display: none !important; /* impossible d’être visibles */
+    }
+}
+
+.no-scroll {
+    overflow: hidden;
+    height: 100vh;
+}
+
+
+.mobile-panel-header{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:32px;
+}
+
+.mobile-logo{
+    height:42px;                /* même hauteur que le logo desktop */
+}
+
+.mobile-close{
+    font-size:34px;
+    line-height:1;
+    background:transparent;
+    border:0;
+    color:#fff;
+    cursor:pointer;
+}
+.mobile-close:hover{color:#ff5252}

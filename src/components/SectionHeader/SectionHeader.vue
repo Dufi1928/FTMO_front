@@ -27,7 +27,6 @@ const props = defineProps({
     <div class="section-header" :style="{ backgroundColor: props.background }">
         <div class="container">
             <h2 class="section-title">{{ props.title }}</h2>
-
             <a :href="props.linkUrl" class="section-link">
                 {{ props.linkText }}
                 <img src="../../assets/icons/arrow-right.svg" alt="→" />
