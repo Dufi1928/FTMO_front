@@ -33,7 +33,7 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <Header />
+  <Header :always-black="true" />
   <main class="login-container">
     <form class="login-form" @submit.prevent="handleSubmit">
       <label>
