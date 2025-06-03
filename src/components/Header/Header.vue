@@ -1,5 +1,5 @@
 <script setup>
-import {ref,watch, onMounted, onUnmounted, computed, defineProps} from 'vue'
+import {ref,watch, onMounted, onUnmounted, defineProps} from 'vue'
 import './Header.css'
 
 /* ① scroll shadow / fond */
@@ -31,12 +31,11 @@ watch(mobileOpen, open => {
 })
 
 
-const headerIsBlack = computed(() => isScrolled.value || props.alwaysBlack)
 
 </script>
 
 <template>
-    <header :class="['header', { scrolled: headerIsBlack }]">
+    <header :class="['header', { scrolled: isScrolled || props.alwaysBlack }]">
         <div class="container">
             <!-- Logo -->
             <a class="logo" href="#">
