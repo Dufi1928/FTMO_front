@@ -2,6 +2,7 @@
 import {renderToString} from '@vue/server-renderer'
 import {createSSRApp, h} from 'vue'
 import {createPinia} from 'pinia'
+import router from '../router/index.js'
 
 export {passToClient}
 // On transmet "pageProps" ainsi que "urlPathname" au client
@@ -17,6 +18,10 @@ export async function render(pageContext) {
     })
 
     app.use(createPinia())
+    app.use(router)
+
+    await router.push(pageContext.urlPathname)
+    await router.isReady()
 
     const appHtml = await renderToString(app)
 
