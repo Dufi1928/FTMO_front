@@ -4,7 +4,7 @@
     height:100svh;              /* hauteur = viewport visible (≃ 100 vh)        */
     min-height:250px;           /* garde-fou sur très petits écrans             */
     display:flex;
-    background-image:url("../assets/images/hero-desktop.png");
+    background-image:url("../../assets/images/hero-desktop.png");
     background-size:cover;      /* couvre toute la surface                      */
     background-position:center bottom; /* on garde le bas de l’image visible   */
     background-repeat:no-repeat;
@@ -57,7 +57,7 @@
 
 @media (max-width:768px){
     .hero-banner{
-        background-image:url("../assets/images/hero-mobile.jpg");
+        background-image:url("../../assets/images/hero-mobile.jpg");
         background-position:center center;     /* recadre différemment si besoin */
     }
     .hero-content-title{

@@ -1,4 +1,4 @@
 export { Page }
-import HomeView from '../../../views/HomeView.vue'
+import DashboardViewView from '../../../views/Protected/Admin/Dashboard/DashboardView.vue'
 
-const Page = HomeView
+const Page = DashboardViewView

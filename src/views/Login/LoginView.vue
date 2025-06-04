@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import Header from '../components/Header/Header.vue'
-import Footer from '../components/Footer/Footer.vue'
+import Header from '../../components/Header/Header.vue'
+import Footer from '../../components/Footer/Footer.vue'
 import './login.css'
 
-import { useAuthStore } from '../../stores/auth.js'
+import { useAuthStore } from '../../../stores/auth.js'
 
 const auth = useAuthStore()
 
