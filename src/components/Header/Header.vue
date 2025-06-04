@@ -1,5 +1,6 @@
 <script setup>
 import {ref,watch, onMounted, onUnmounted, computed, defineProps} from 'vue'
+import { RouterLink } from 'vue-router'
 import { useAuthStore } from '../../../stores/auth.js'
 import './Header.css'
 
@@ -42,9 +43,9 @@ const auth = useAuthStore()
     <header :class="['header', { scrolled: headerIsBlack }]">
         <div class="container">
             <!-- Logo -->
-            <a class="logo" href="/">
+            <RouterLink class="logo" to="/">
                 <img src="../../assets/logo.svg" alt="Logo"/>
-            </a>
+            </RouterLink>
 
             <!-- Bouton burger (mobile only) -->
             <button
@@ -58,12 +59,12 @@ const auth = useAuthStore()
 
             <!-- Nav desktop -->
             <nav class="nav">
-                <a href="/"><img src="../../assets/icons/home 1.svg"/>Accueil</a>
+                <RouterLink to="/"><img src="../../assets/icons/home 1.svg"/>Accueil</RouterLink>
                 <a href="#"><img src="../../assets/icons/calendar-lines 1.svg"/>Calendrier</a>
                 <a href="#"><img src="../../assets/icons/question-mark-circle 1.svg"/>À propos</a>
                 <a href="#"><img src="../../assets/icons/chat-lines 1.svg"/>Contact</a>
-                <a v-if="auth.isAuthenticated" href="/protected/admin/dashboard">Mon compte</a>
-                <a v-else href="/login">Connexion</a>
+                <RouterLink v-if="auth.isAuthenticated" to="/protected/admin/dashboard">Mon compte</RouterLink>
+                <RouterLink v-else to="/login">Connexion</RouterLink>
             </nav>
         </div>
 
@@ -86,12 +87,12 @@ const auth = useAuthStore()
                 </header>
 
                 <!-- liens du menu -->
-                <a @click="closeMobile" href="#"><img src="../../assets/icons/home 1.svg" />Accueil</a>
+                <RouterLink @click="closeMobile" to="/"><img src="../../assets/icons/home 1.svg" />Accueil</RouterLink>
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/calendar-lines 1.svg" />Calendrier</a>
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/question-mark-circle 1.svg" />À propos</a>
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/chat-lines 1.svg" />Contact</a>
-                <a v-if="auth.isAuthenticated" @click="closeMobile" href="/protected">Mon compte</a>
-                <a v-else @click="closeMobile" href="/login">Connexion</a>
+                <RouterLink v-if="auth.isAuthenticated" @click="closeMobile" to="/protected/admin/dashboard">Mon compte</RouterLink>
+                <RouterLink v-else @click="closeMobile" to="/login">Connexion</RouterLink>
             </nav>
         </div>
     </header>
