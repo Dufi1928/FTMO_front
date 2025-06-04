@@ -1,5 +1,5 @@
 .login-container {
-  padding: 100px 20px 0;
+  padding: 150px 20px;
   display: flex;
   justify-content: center;
 }
@@ -40,6 +40,23 @@
   border-radius: 4px;
   font-weight: bold;
 }
+.login-form button:hover {
+  background-color: #4b50ff;
+  transform: translateY(-1px);
+}
+
+.login-form button:hover::before {
+  opacity: 0.5;
+}
+@keyframes snowfall {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100px);
+  }
+}
+
 
 .login-form button:disabled {
   opacity: 0.6;
