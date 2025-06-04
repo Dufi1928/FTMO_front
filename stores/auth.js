@@ -1,12 +1,12 @@
 // stores/auth.ts
-import {defineStore} from 'pinia'
-import {ref} from 'vue'
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
-    const access = ref < string | null > (localStorage.getItem('accessToken'))
-    const refresh = ref < string | null > (localStorage.getItem('refreshToken'))
+    const access = ref(localStorage.getItem('accessToken'))
+    const refresh = ref(localStorage.getItem('refreshToken'))
 
-    function setTokens(a: string, r: string) {
+    function setTokens(a, r) {
         access.value = a
         refresh.value = r
         localStorage.setItem('accessToken', a)
