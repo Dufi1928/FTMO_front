@@ -39,7 +39,7 @@ const headerIsBlack = computed(() => isScrolled.value || props.alwaysBlack)
     <header :class="['header', { scrolled: headerIsBlack }]">
         <div class="container">
             <!-- Logo -->
-            <a class="logo" href="#">
+            <a class="logo" href="/">
                 <img src="../../assets/logo.svg" alt="Logo"/>
             </a>
 
@@ -55,7 +55,7 @@ const headerIsBlack = computed(() => isScrolled.value || props.alwaysBlack)
 
             <!-- Nav desktop -->
             <nav class="nav">
-                <a href="#"><img src="../../assets/icons/home 1.svg"/>Accueil</a>
+                <a href="/"><img src="../../assets/icons/home 1.svg"/>Accueil</a>
                 <a href="#"><img src="../../assets/icons/calendar-lines 1.svg"/>Calendrier</a>
                 <a href="#"><img src="../../assets/icons/question-mark-circle 1.svg"/>À propos</a>
                 <a href="#"><img src="../../assets/icons/chat-lines 1.svg"/>Contact</a>

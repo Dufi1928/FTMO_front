@@ -4,7 +4,7 @@ import Header from '../components/Header/Header.vue'
 import Footer from '../components/Footer/Footer.vue'
 import './login.css'
 
-import { setTokens } from '../lib/auth'
+import { setTokens } from '../../lib/auth.js'
 
 const email = ref('')
 const password = ref('')
