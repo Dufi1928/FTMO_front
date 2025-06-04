@@ -3,7 +3,7 @@ import {ref, onMounted} from 'vue'
 import Header from '../components/Header/Header.vue'
 import SectionHeader from '../components/SectionHeader/SectionHeader.vue'
 import CityCircle from '../components/CityCircle/CityCircle.vue'
-import './index.css'
+import './home.css'
 import '@splidejs/vue-splide/css'
 import {Splide, SplideSlide} from '@splidejs/vue-splide'
 import MatchCard from "@/components/MatchCard/MatchCard.vue";
