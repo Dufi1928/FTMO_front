@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from '../../stores/auth'
 
-import HomeView from '@/views/HomeView.vue'
-import LoginView from '@/views/LoginView.vue'
-import ProtectedView from '@/views/ProtectedView.vue'
+import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/Login/LoginView.vue'
+import DashboardView from '../views/Protected/Admin/Dashboard/DashboardView.vue'
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
   { path: '/login', name: 'login', component: LoginView },
-  { path: '/protected', name: 'protected', component: ProtectedView, meta: { requiresAuth: true } }
+  { path: '/protected/admin/dashboard', name: 'dashboard', component: DashboardView, meta: { requiresAuth: true } }
 ]
 
 const router = createRouter({

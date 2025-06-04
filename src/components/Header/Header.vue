@@ -62,7 +62,7 @@ const auth = useAuthStore()
                 <a href="#"><img src="../../assets/icons/calendar-lines 1.svg"/>Calendrier</a>
                 <a href="#"><img src="../../assets/icons/question-mark-circle 1.svg"/>À propos</a>
                 <a href="#"><img src="../../assets/icons/chat-lines 1.svg"/>Contact</a>
-                <a v-if="auth.isAuthenticated" href="/protected/team">Mon compte</a>
+                <a v-if="auth.isAuthenticated" href="/protected/admin/dashboard">Mon compte</a>
                 <a v-else href="/login">Connexion</a>
             </nav>
         </div>

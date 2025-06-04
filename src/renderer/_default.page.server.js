@@ -1,11 +1,12 @@
 // src/renderer/_default.page.server.js
 import {renderToString} from '@vue/server-renderer'
 import {createSSRApp, h} from 'vue'
-import { createPinia } from 'pinia'
+import {createPinia} from 'pinia'
 
-// 1) On exporte passToClient
 export {passToClient}
-const passToClient = ['pageProps'] // Indique qu'on veut transmettre "pageProps" au client
+// On transmet "pageProps" ainsi que "urlPathname" au client
+const passToClient = ['pageProps', 'urlPathname']
+
 
 // 2) On exporte la fonction render
 export async function render(pageContext) {
@@ -37,8 +38,10 @@ export async function render(pageContext) {
 
     // 3) On renvoie pageProps dans "pageContext"
     return {
-        documentHtml, pageContext: {
-            pageProps: pageProps || {}
+        documentHtml,
+        pageContext: {
+            pageProps: pageProps || {},
+            urlPathname: pageContext.urlPathname,
         }
     }
 }
