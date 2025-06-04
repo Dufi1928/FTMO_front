@@ -4,7 +4,9 @@ import Header from '../components/Header/Header.vue'
 import Footer from '../components/Footer/Footer.vue'
 import './login.css'
 
-import { setTokens } from '../../lib/auth.js'
+import { useAuthStore } from '../../stores/auth.js'
+
+const auth = useAuthStore()
 
 const email = ref('')
 const password = ref('')
@@ -23,7 +25,7 @@ async function handleSubmit() {
         if (!res.ok) {
             error.value = data.detail || 'Identifiants invalides'
         } else {
-            setTokens(data.access, data.refresh)
+            auth.setTokens(data.access, data.refresh)
             window.location.href = '/'          // redirection manuelle
         }
     } catch {

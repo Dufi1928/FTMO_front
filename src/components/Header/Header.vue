@@ -1,5 +1,6 @@
 <script setup>
 import {ref,watch, onMounted, onUnmounted, computed, defineProps} from 'vue'
+import { useAuthStore } from '../../../stores/auth.js'
 import './Header.css'
 
 /* ① scroll shadow / fond */
@@ -33,6 +34,8 @@ watch(mobileOpen, open => {
 
 const headerIsBlack = computed(() => isScrolled.value || props.alwaysBlack)
 
+const auth = useAuthStore()
+
 </script>
 
 <template>
@@ -59,7 +62,8 @@ const headerIsBlack = computed(() => isScrolled.value || props.alwaysBlack)
                 <a href="#"><img src="../../assets/icons/calendar-lines 1.svg"/>Calendrier</a>
                 <a href="#"><img src="../../assets/icons/question-mark-circle 1.svg"/>À propos</a>
                 <a href="#"><img src="../../assets/icons/chat-lines 1.svg"/>Contact</a>
-                <a href="/login">Connexion</a>
+                <a v-if="auth.isAuthenticated" href="/protected">Mon compte</a>
+                <a v-else href="/login">Connexion</a>
             </nav>
         </div>
 
@@ -86,7 +90,8 @@ const headerIsBlack = computed(() => isScrolled.value || props.alwaysBlack)
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/calendar-lines 1.svg" />Calendrier</a>
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/question-mark-circle 1.svg" />À propos</a>
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/chat-lines 1.svg" />Contact</a>
-                <a @click="closeMobile" href="/login">Connexion</a>
+                <a v-if="auth.isAuthenticated" @click="closeMobile" href="/protected">Mon compte</a>
+                <a v-else @click="closeMobile" href="/login">Connexion</a>
             </nav>
         </div>
     </header>

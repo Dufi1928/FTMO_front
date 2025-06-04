@@ -1,6 +1,7 @@
 // src/renderer/_default.page.server.js
 import {renderToString} from '@vue/server-renderer'
 import {createSSRApp, h} from 'vue'
+import { createPinia } from 'pinia'
 
 // 1) On exporte passToClient
 export {passToClient}
@@ -13,6 +14,8 @@ export async function render(pageContext) {
     const app = createSSRApp({
         render: () => h(Page, pageProps || {})
     })
+
+    app.use(createPinia())
 
     const appHtml = await renderToString(app)
 
