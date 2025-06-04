@@ -11,10 +11,6 @@ export default defineConfig({
     vue(),
     ssr(),
     vueDevTools(),
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    },
-  },
+  ]
+  // Remove @ alias to avoid vite-plugin-ssr warning
 })

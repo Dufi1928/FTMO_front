@@ -6,8 +6,8 @@ import CityCircle from '../components/CityCircle/CityCircle.vue'
 import './home.css'
 import '@splidejs/vue-splide/css'
 import {Splide, SplideSlide} from '@splidejs/vue-splide'
-import MatchCard from "@/components/MatchCard/MatchCard.vue";
-import Footer from "@/components/Footer/Footer.vue";
+import MatchCard from "../components/MatchCard/MatchCard.vue";
+import Footer from "../components/Footer/Footer.vue";
 
 
 const cities = ref([])
