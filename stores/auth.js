@@ -10,6 +10,8 @@ export const useAuthStore = defineStore('auth', () => {
         typeof localStorage === 'undefined' ? null : localStorage.getItem('refreshToken')
     )
 
+    const renderKey = ref(0) // 👈 Nouvelle clé de re-render
+
     function setTokens(a, r) {
         access.value = a
         refresh.value = r
@@ -17,6 +19,8 @@ export const useAuthStore = defineStore('auth', () => {
             localStorage.setItem('accessToken', a)
             localStorage.setItem('refreshToken', r)
         }
+
+        renderKey.value++ // 👈 Déclenche un re-render global
     }
 
     function logout() {
@@ -26,9 +30,11 @@ export const useAuthStore = defineStore('auth', () => {
             localStorage.removeItem('accessToken')
             localStorage.removeItem('refreshToken')
         }
+
+        renderKey.value++ // 👈 Force aussi re-render lors du logout
     }
 
     const isAuthenticated = computed(() => !!access.value)
 
-    return {access, refresh, isAuthenticated, setTokens, logout}
+    return { access, refresh, isAuthenticated, setTokens, logout, renderKey }
 })

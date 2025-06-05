@@ -64,6 +64,7 @@ const auth = useAuthStore()
                 <a href="#"><img src="../../assets/icons/chat-lines 1.svg"/>Contact</a>
                 <a v-if="auth.isAuthenticated" href="/protected/admin/dashboard">Mon compte</a>
                 <a v-else href="/login">Connexion</a>
+
             </nav>
         </div>
 
@@ -90,9 +91,22 @@ const auth = useAuthStore()
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/calendar-lines 1.svg" />Calendrier</a>
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/question-mark-circle 1.svg" />À propos</a>
                 <a @click="closeMobile" href="#"><img src="../../assets/icons/chat-lines 1.svg" />Contact</a>
-                <a v-if="auth.isAuthenticated" @click="closeMobile" href="/protected/admin/dashboard">Mon compte</a>
-                <a v-else @click="closeMobile" href="/login">Connexion</a>
+                <a
+                    v-if="auth.isAuthenticated"
+                    href="/protected/admin/dashboard"
+                    @click="closeMobile"
+                >
+                    Mon compte
+                </a>
+                <a
+                    v-else
+                    href="/login"
+                    @click="closeMobile"
+                >
+                    Connexion
+                </a>
             </nav>
         </div>
     </header>
+
 </template>

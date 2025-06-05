@@ -1,10 +1,7 @@
-// src/renderer/_default.page.client.js
-import { useClientRouter } from 'vite-plugin-ssr/client/router'
+export { render }
 import { createApp } from './app.js'
 
-useClientRouter({
-  render(pageContext) {
-    const { app } = createApp(pageContext)
-    app.mount('#app')
-  }
-})
+async function render(pageContext) {
+  const { app } = createApp(pageContext)
+  app.mount('#app')
+}
