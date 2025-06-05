@@ -1,12 +1,12 @@
-import { createSSRApp } from 'vue'
-import App from '../App.vue'
+import { createSSRApp, h } from 'vue'
 import { createPinia } from 'pinia'
-import router from '../router/index.js'
 
-export function createApp() {
-  const app = createSSRApp(App)
+export function createApp(pageContext) {
+  const { Page, pageProps } = pageContext
+  const app = createSSRApp({
+    render: () => h(Page, pageProps || {})
+  })
   const pinia = createPinia()
   app.use(pinia)
-  app.use(router)
-  return { app, router }
+  return { app }
 }

@@ -1,6 +1,5 @@
 <template>
-    <router-view/>
-    <RouterLink to="/login">→ Tester /login ←</RouterLink>
+    <slot />
 </template>
 
 <script setup>
