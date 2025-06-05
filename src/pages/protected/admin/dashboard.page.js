@@ -1,4 +1,4 @@
 export { Page }
-import DashboardViewView from '../../../views/Protected/Admin/Dashboard/DashboardView.vue'
+import App from '../../../App.vue'
 
-const Page = DashboardViewView
+const Page = App

@@ -1,31 +1,18 @@
 // src/renderer/_default.page.server.js
-import {renderToString} from '@vue/server-renderer'
-import {createSSRApp, h} from 'vue'
-import {createPinia} from 'pinia'
-import router from '../router/index.js'
+import { renderToString } from '@vue/server-renderer'
+import { createApp } from './app.js'
 
 export { passToClient }
-// On transmet "pageProps" ainsi que "urlPathname" au client
 const passToClient = ['pageProps', 'urlPathname']
 
-
-// 2) On exporte la fonction render
 export async function render(pageContext) {
-    const {Page, pageProps} = pageContext
+  const { app, router } = createApp()
+  await router.push(pageContext.urlPathname)
+  await router.isReady()
 
-    const app = createSSRApp({
-        render: () => h(Page, pageProps || {})
-    })
+  const appHtml = await renderToString(app)
 
-    app.use(createPinia())
-    app.use(router)
-
-    await router.push(pageContext.urlPathname)
-    await router.isReady()
-
-    const appHtml = await renderToString(app)
-
-    const documentHtml = `
+  const documentHtml = `
   <!DOCTYPE html>
   <html lang="fr">
     <head>
@@ -41,12 +28,11 @@ export async function render(pageContext) {
     </body>
   </html>`
 
-    // 3) On renvoie pageProps dans "pageContext"
-    return {
-        documentHtml,
-        pageContext: {
-            pageProps: pageProps || {},
-            urlPathname: pageContext.urlPathname,
-        }
+  return {
+    documentHtml,
+    pageContext: {
+      pageProps: pageContext.pageProps || {},
+      urlPathname: pageContext.urlPathname,
     }
+  }
 }
