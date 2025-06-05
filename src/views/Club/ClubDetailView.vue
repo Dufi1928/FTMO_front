@@ -1,9 +1,9 @@
 <script setup>
-const props = defineProps()
+import { usePageContext } from '../../renderer/usePageContext.js'
 
-
-const clubId = props.routeParams?.id ?? 'inconnu'
-console.log('routeParams dans props :', props)
+const pageContext = usePageContext()
+const clubId = pageContext.routeParams?.id ?? 'inconnu'
+console.log('routeParams dans pageContext :', pageContext)
 </script>
 
 <template>
