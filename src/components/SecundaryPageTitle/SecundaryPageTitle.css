@@ -1,0 +1,19 @@
+.sec-page-title-container{
+    width: 100%;
+    margin: 20px auto 20px;
+    display: flex;
+    align-items:center ;
+    justify-content: flex-start;
+}
+.secondary-page-title{
+    margin: 0;
+    line-height: 3rem;
+    font-size: 3rem;
+    font-family: "Bebas Neue", sans-serif;;
+}
+@media (max-width: 768px) {
+    .secondary-page-title{
+        line-height: 2rem;
+        font-size: 2rem;
+    }
+}

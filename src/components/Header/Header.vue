@@ -7,7 +7,8 @@ import './Header.css'
 const isScrolled = ref(false)
 
 const props = defineProps({
-    alwaysBlack: { type: Boolean, default: false }
+    alwaysBlack: { type: Boolean, default: false },
+    theme: { type: String, default: 'dark' }
 })
 
 function handleScroll() {
@@ -36,15 +37,53 @@ const headerIsBlack = computed(() => isScrolled.value || props.alwaysBlack)
 
 const auth = useAuthStore()
 
+onMounted(() => {
+    const accessToken = localStorage.getItem('accessToken')
+
+    const desktopLink = document.querySelector('.nav a[href="/login"], .nav a[href="/protected/admin/dashboard"]')
+    const mobileLink = document.querySelector('.mobile-panel a[href="/login"], .mobile-panel a[href="/protected/admin/dashboard"]')
+
+    if (accessToken && accessToken !== 'null') {
+        if (desktopLink) {
+            desktopLink.href = '/protected/admin/dashboard'
+            desktopLink.textContent = 'Mon compte'
+        }
+        if (mobileLink) {
+            mobileLink.href = '/protected/admin/dashboard'
+            mobileLink.textContent = 'Mon compte'
+        }
+    } else {
+        if (desktopLink) {
+            desktopLink.href = '/login'
+            desktopLink.textContent = 'Connexion'
+        }
+        if (mobileLink) {
+            mobileLink.href = '/login'
+            mobileLink.textContent = 'Connexion'
+        }
+    }
+})
+const headerClasses = computed(() => {
+    return {
+        header: true,
+        scrolled: isScrolled.value || props.alwaysBlack,
+        'header--light': props.theme === 'light'
+    }
+})
+
+
 </script>
 
 <template>
-    <header :class="['header', { scrolled: headerIsBlack }]">
+    <header :class="headerClasses">
         <div class="container">
             <!-- Logo -->
+
             <a class="logo" href="/">
-                <img src="../../assets/logo.svg" alt="Logo"/>
+                <img  src="../../assets/logo.svg" alt="Logo" :class="{ 'd-none': theme === 'light' }"/>
+                <img  src="../../assets/logo_black.svg" alt="Logo" :class="{ 'd-none': theme !== 'light' }"/>
             </a>
+
 
             <!-- Bouton burger (mobile only) -->
             <button
@@ -58,10 +97,27 @@ const auth = useAuthStore()
 
             <!-- Nav desktop -->
             <nav class="nav">
-                <a href="/"><img src="../../assets/icons/home 1.svg"/>Accueil</a>
-                <a href="#"><img src="../../assets/icons/calendar-lines 1.svg"/>Calendrier</a>
-                <a href="#"><img src="../../assets/icons/question-mark-circle 1.svg"/>À propos</a>
-                <a href="#"><img src="../../assets/icons/chat-lines 1.svg"/>Contact</a>
+                <a href="/">
+                    <img src="../../assets/icons/home_icon.svg" :class="{ 'd-none': theme === 'light' }"/>
+                    <img src="../../assets/icons/home_icon_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    Accueil
+                </a>
+                <a href="#">
+                    <img src="../../assets/icons/calendar-lines.svg" :class="{ 'd-none': theme === 'light' }"/>
+                    <img src="../../assets/icons/calendar-lines_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    Calendrier
+                </a>
+                <a href="#">
+                    <img src="../../assets/icons/question-mark-circle.svg" :class="{ 'd-none': theme === 'light' }" />
+                    <img src="../../assets/icons/question-mark-circle_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    À propos
+                </a>
+
+                <a href="#">
+                    <img src="../../assets/icons/chat-lines.svg" :class="{ 'd-none': theme === 'light' }" />
+                    <img src="../../assets/icons/chat-lines_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    Contact
+                </a>
                 <a v-if="auth.isAuthenticated" href="/protected/admin/dashboard">Mon compte</a>
                 <a v-else href="/login">Connexion</a>
 
@@ -78,7 +134,8 @@ const auth = useAuthStore()
 
                 <!-- ─── Barre supérieure : logo + bouton “X” ─── -->
                 <header class="mobile-panel-header">
-                    <img class="mobile-logo" src="../../assets/logo.svg" alt="Logo" />
+                    <img  src="../../assets/logo.svg" alt="Logo" :class="{ 'd-none': theme === 'light' }"/>
+                    <img  src="../../assets/logo_black.svg" alt="Logo" :class="{ 'd-none': theme !== 'light' }"/>
                     <button
                         class="mobile-close"
                         aria-label="Fermer le menu"
@@ -87,10 +144,25 @@ const auth = useAuthStore()
                 </header>
 
                 <!-- liens du menu -->
-                <a @click="closeMobile" href="/"><img src="../../assets/icons/home 1.svg" />Accueil</a>
-                <a @click="closeMobile" href="#"><img src="../../assets/icons/calendar-lines 1.svg" />Calendrier</a>
-                <a @click="closeMobile" href="#"><img src="../../assets/icons/question-mark-circle 1.svg" />À propos</a>
-                <a @click="closeMobile" href="#"><img src="../../assets/icons/chat-lines 1.svg" />Contact</a>
+                <a @click="closeMobile" href="/">
+                    <img src="../../assets/icons/home_icon.svg" :class="{ 'd-none': theme === 'light' }"/>
+                    <img src="../../assets/icons/home_icon_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    Accueil</a>
+                <a @click="closeMobile" href="#">
+                    <img src="../../assets/icons/calendar-lines.svg" :class="{ 'd-none': theme === 'light' }"/>
+                    <img src="../../assets/icons/calendar-lines_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    Calendrier
+                </a>
+                <a @click="closeMobile" href="#">
+                    <img src="../../assets/icons/question-mark-circle.svg" :class="{ 'd-none': theme === 'light' }" />
+                    <img src="../../assets/icons/question-mark-circle_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    À propos
+                </a>
+                <a @click="closeMobile" href="#">
+                    <img src="../../assets/icons/chat-lines.svg" :class="{ 'd-none': theme === 'light' }" />
+                    <img src="../../assets/icons/chat-lines_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    Contact
+                </a>
                 <a
                     v-if="auth.isAuthenticated"
                     href="/protected/admin/dashboard"

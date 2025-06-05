@@ -198,4 +198,33 @@ html, body {
     color:#fff;
     cursor:pointer;
 }
-.mobile-close:hover{color:#ff5252}
+.mobile-close:hover{
+    color:#ff5252
+}
+
+.header--light .nav a,
+.header--light .burger span,
+.header--light .mobile-logo,
+.header--light .mobile-close {
+    color: #000 !important;
+}
+
+.header--light .burger span {
+    background: #000 !important;
+}
+
+.header--light .mobile-panel {
+    background: #fff !important;
+}
+
+.header--light .mobile-panel a {
+    color: #000 !important;
+}
+
+.header--light {
+    background: white !important;
+    border-bottom: 1px solid rgba(0, 0, 0, .1);
+}
+.d-none {
+    display: none !important;
+}
