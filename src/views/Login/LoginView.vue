@@ -34,6 +34,7 @@ async function handleSubmit() {
         loading.value = false
     }
 }
+console.log('⚙️ LoginView mounted')
 </script>
 
 <template>

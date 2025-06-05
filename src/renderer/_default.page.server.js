@@ -4,7 +4,7 @@ import {createSSRApp, h} from 'vue'
 import {createPinia} from 'pinia'
 import router from '../router/index.js'
 
-export {passToClient}
+export { passToClient }
 // On transmet "pageProps" ainsi que "urlPathname" au client
 const passToClient = ['pageProps', 'urlPathname']
 

@@ -8,6 +8,7 @@ import '@splidejs/vue-splide/css'
 import {Splide, SplideSlide} from '@splidejs/vue-splide'
 import MatchCard from "../../components/MatchCard/MatchCard.vue";
 import Footer from "../../components/Footer/Footer.vue";
+import MapProClubs from "../../components/Map/MapProClubs.vue"
 
 
 const cities = ref([])
@@ -156,6 +157,12 @@ const ranking = ref([
             </div>
         </div>
     </div>
+
+    <template>
+        <div class="map-container-home h-screen">
+            <MapProClubs api-key="hwPULScg2AcyGIZf8gl0"/>
+        </div>
+    </template>
     <Footer/>
 
 

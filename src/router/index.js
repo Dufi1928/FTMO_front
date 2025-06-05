@@ -1,6 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, createMemoryHistory } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
-
 import HomeView from '../views/Home/HomeView.vue'
 import LoginView from '../views/Login/LoginView.vue'
 import DashboardView from '../views/Protected/Admin/Dashboard/DashboardView.vue'
@@ -12,13 +11,15 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: typeof window === 'undefined' ? createMemoryHistory() : createWebHistory(),
   routes
 })
 
 router.beforeEach((to, from, next) => {
+  console.log('[Guard] navigation vers:', to.fullPath)
   const auth = useAuthStore()
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
+    console.log('→ redirect /login')
     next('/login')
   } else {
     next()
