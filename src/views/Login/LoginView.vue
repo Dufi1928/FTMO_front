@@ -38,7 +38,7 @@ console.log('⚙️ LoginView mounted')
 </script>
 
 <template>
-    <Header :alwaysBlack="true" />
+    <Header :key="auth.renderKey" :alwaysBlack="true" />
     <main class="login-container">
         <form class="login-form" @submit.prevent="handleSubmit">
             <label>

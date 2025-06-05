@@ -19,7 +19,7 @@ function logout() {
 </script>
 
 <template>
-    <Header :alwaysBlack="true"/>
+    <Header :key="auth.renderKey" :alwaysBlack="true"/>
     <div class="protected">
         <h1>Zone protégée</h1>
         <p>Seuls les utilisateurs authentifiés peuvent voir cette page.</p>

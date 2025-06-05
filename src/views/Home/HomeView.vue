@@ -1,6 +1,7 @@
 <script setup>
 import {ref, onMounted} from 'vue'
 import Header from '../../components/Header/Header.vue'
+import { useAuthStore } from '../../../stores/auth.js'
 import SectionHeader from '../../components/SectionHeader/SectionHeader.vue'
 import CityCircle from '../../components/CityCircle/CityCircle.vue'
 import './home.css'
@@ -11,6 +12,7 @@ import Footer from "../../components/Footer/Footer.vue";
 import MapProClubs from "../../components/Map/MapProClubs.vue"
 
 
+const auth = useAuthStore()
 const cities = ref([])
 
 onMounted(async () => {
@@ -38,7 +40,7 @@ const ranking = ref([
 
 
 <template>
-    <Header/>
+    <Header :key="auth.renderKey"/>
     <div class="hero-banner">
         <div class="hero-content-container">
             <div class="hero-content">
