@@ -8,5 +8,6 @@ export function createApp(pageContext) {
   })
   const pinia = createPinia()
   app.use(pinia)
+  app.provide('pageContext', pageContext)
   return { app }
 }
