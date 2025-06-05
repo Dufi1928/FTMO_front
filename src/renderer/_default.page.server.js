@@ -6,9 +6,7 @@ export { passToClient }
 const passToClient = ['pageProps', 'urlPathname']
 
 export async function render(pageContext) {
-  const { app, router } = createApp()
-  await router.push(pageContext.urlPathname)
-  await router.isReady()
+  const { app } = createApp(pageContext)
 
   const appHtml = await renderToString(app)
 
