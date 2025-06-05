@@ -1,4 +1,4 @@
 export { Page }
-import LoginView from '../views/Login/LoginView.vue'
+import App from '../App.vue'
 
-const Page = LoginView
+const Page = App

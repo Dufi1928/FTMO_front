@@ -1,4 +1,4 @@
 export { Page }
-import HomeView from '../views/Home/HomeView.vue'
+import App from '../App.vue'
 
-const Page = HomeView
+const Page = App
