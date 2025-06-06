@@ -1,8 +1,7 @@
 // src/renderer/_default.page.server.js
 import { renderToString } from '@vue/server-renderer'
 import { createApp } from './app.js'
-import { escapeInject } from 'vite-plugin-ssr/server'
-
+import { escapeInject, dangerouslySkipEscape } from 'vite-plugin-ssr/server'
 export { render, passToClient }
 
 const passToClient = ['pageProps', 'urlPathname', 'routeParams']
@@ -32,7 +31,7 @@ async function render(pageContext) {
     <title>FTMO</title>
   </head>
   <body>
-    <div id="app">${appHtml}</div>
+    <div id="app">${dangerouslySkipEscape(appHtml)}</div>
   </body>
 </html>`
 

@@ -1,0 +1,117 @@
+.club-page-container{
+    height: 100%;
+    padding-top: 100px;
+    padding-bottom: 100px;
+    background-color: #F7F7F7;
+    width: 100%;
+    overflow: hidden;
+}
+.club-detail-container{
+    position: relative;
+    width: 80%;
+    margin: auto;
+    padding-bottom: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.club-image-wrapper{
+    width: 49%;
+    display: flex;
+    overflow: hidden;
+    border: none;
+    border-radius: 5px;
+    background-color: inherit;
+    box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
+}
+.club-image-wrapper img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.club-detail-info{
+    height: 100%;
+    width: 48%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-evenly;
+    h2{
+        margin: 0;
+        font-size: 3rem;
+        line-height: 3rem;
+        font-family: "Bebas Neue", sans-serif;
+    }
+    p{
+        font-size: 1rem;
+        line-height: 2rem;
+        font-family: "Lato", sans-serif;
+        font-weight: 400;
+        color: #6D6E71;
+    }
+    button{
+        color: white;
+        border: none;
+        padding: 12px 48px 12px 48px;
+        background-color: #DC2626;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+    button:hover{
+        cursor: pointer;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .club-detail-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .club-image-wrapper,
+    .club-detail-info {
+        width: 100%;
+    }
+
+    .club-image-wrapper {
+        height: auto;
+        max-height: 300px;
+    }
+
+    .club-detail-info h2 {
+        font-size: 2rem;
+        line-height: 2.5rem;
+    }
+
+    .club-detail-info p {
+        font-size: 0.95rem;
+        line-height: 1.6rem;
+    }
+
+    .club-detail-info button {
+        width: 100%;
+        text-align: center;
+    }
+}
+.our-players-section{
+    width: 100%;
+    background-color: white;
+}
+.h2-page-container{
+    width: 80%;
+    padding: 75px 0 0px 0;
+    margin: auto;
+}
+.city-slider-container{
+    padding-left: 10%;
+    padding-right: 10%;
+    margin-bottom: 30px;
+    overflow: hidden;
+    align-items: center;
+    background-color: #F7F7F7;
+}
+.city-slider-container .splide__track{
+    overflow: visible !important; /* force l’overflow */
+}
+

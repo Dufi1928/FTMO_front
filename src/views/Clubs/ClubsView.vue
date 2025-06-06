@@ -28,25 +28,28 @@ import ClubCard from "../../components/ClubCard/ClubCard.vue";
 
         <div class="club-listing-container">
             <ClubCard
-                id="club-card"
+                slug = "1"
                 title="Deulemont"
                 image="src/assets/images/deulemont.jpeg"
                 address="Salle Victor Hugo, Lille"
                 operating-hours="Lun 18–20h Mer 19–21h Sam 10–12h"
             />
             <ClubCard
+                slug = "1"
                 title="Deulemont"
                 image="src/assets/images/deulemont.jpeg"
                 address="Salle Victor Hugo, Lille"
                 operating-hours="Lun 18–20h Mer 19–21h Sam 10–12h"
             />
             <ClubCard
+                slug = "1"
                 title="Deulemont"
                 image="src/assets/images/deulemont.jpeg"
                 address="Salle Victor Hugo, Lille"
                 operating-hours="Lun 18–20h Mer 19–21h Sam 10–12h"
             />
             <ClubCard
+                slug = "1"
                 title="Deulemont"
                 image="src/assets/images/deulemont.jpeg"
                 address="Salle Victor Hugo, Lille"

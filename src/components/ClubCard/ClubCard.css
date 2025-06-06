@@ -52,7 +52,9 @@
     padding: 20px;
 }
 
-.club-card-button button {
+.club-card-button a {
+    font-family: Lato, sans-serif;
+    text-decoration: none;
     background-color: #00143d;
     color: white;
     border: none;

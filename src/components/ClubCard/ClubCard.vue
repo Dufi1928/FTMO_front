@@ -25,7 +25,7 @@ const props = defineProps({
             </div>
         </div>
         <div class="club-card-button">
-            <button>Voir la fiche</button>
+            <a :href="`/clubs/${slug}`">Voir la fiche</a>
         </div>
     </div>
 </template>

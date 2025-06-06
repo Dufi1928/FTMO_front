@@ -1,0 +1,170 @@
+
+:root {
+    --c-bg-table: #ffffff;
+    --c-bg-head: #FCFCFC;
+    --c-text-link: #2436d4;
+    --c-badge-gold: #FFF4BD;
+    --c-badge-silver: #E6E6E6;
+    --c-badge-bronze: #FAEBC8;
+    --fs-body: 15px;
+    --pad-cell: 18px 24px;
+    --width-pinned: 160px;       /* largeur de la colonne « pinned » */
+    --min-width-mobile: 720px;   /* largeur min du tableau scrollable */
+    font-family: Lato, sans-serif;
+    --row-h: 72px;
+}
+
+/* ========== CONTENEUR GLOBAL ========== */
+.ranking-table-container {
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 30px;
+    overflow: hidden;
+}
+
+.ranking-left {
+    border-radius: 10px 0 0 10px;
+}
+.ranking-main {
+    border-radius: 0 10px 10px 0;
+}
+
+.ranking-table-wrapper {
+    box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
+    rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+    position: relative;
+    width: 80%;
+    margin: auto;
+    background: var(--c-bg-wrapper);
+    border-radius: 10px;
+}
+
+.ranking-table tr {
+    height: var(--row-h);
+}
+.ranking-table th,
+.ranking-table td {
+    height: 100%;
+    line-height: calc(var(--row-h) - 2 * 0.7rem);
+}
+
+/* ========== TABLE COMMUNE (desktop) ========== */
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--c-bg-table);
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.16);
+    overflow: hidden;
+}
+
+.ranking-table th,
+.ranking-table td {
+    padding: var(--pad-cell);
+    text-align: left;
+    font-size: var(--fs-body);
+}
+
+/* En-têtes triables */
+.sortable {
+    cursor: pointer;
+}
+
+.ranking-table thead,
+.ranking-table tfoot {
+    background: var(--c-bg-head);
+    font-weight: 600;
+}
+
+.ranking-main th {
+    white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+}
+
+.ranking-table tbody tr:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* ­— badges classement (si nécessaire) — */
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    font-weight: 600;
+}
+.gold {
+    background: var(--c-badge-gold);
+}
+.silver {
+    background: var(--c-badge-silver);
+}
+.bronze {
+    background: var(--c-badge-bronze);
+}
+.rank-badge:not(.gold):not(.silver):not(.bronze) {
+    background: #f5f5f5;
+}
+
+/* ­— classes pour valeurs + / – — */
+.positive {
+    color: #12B221;
+    font-weight: 600;
+}
+.negative {
+    color: #D11B1B;
+    font-weight: 600;
+}
+
+/* ========== CLONE / SCROLL PATTERN ========== */
+/* bloc figé (clone) */
+.rank-pinned {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--width-pinned);
+    overflow: hidden;
+    z-index: 2;
+    border-radius: 10px 0 0 0;
+}
+
+/* bloc scrollable */
+.rank-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-left: var(--width-pinned);
+    border-radius: 0 10px 10px 0;
+}
+
+/* ========== RESPONSIVE (mobile < 768 px) ========== */
+@media (max-width: 767px) {
+    .ranking-table-wrapper {
+        width: 80%;
+    }
+    .rank-scroll {
+        margin-left: var(--width-pinned);
+    }
+    .ranking-table {
+        min-width: var(--min-width-mobile);
+    }
+    .rank-scroll th,
+    .rank-scroll td {
+        white-space: nowrap;
+    }
+}
+
+/* ========== ACCESSIBILITÉ — désactive la sélection dans le clone =========== */
+.rank-pinned table,
+.rank-pinned th,
+.rank-pinned td {
+    pointer-events: none;
+}
+
+.ranking-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
