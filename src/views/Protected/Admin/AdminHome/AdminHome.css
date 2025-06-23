@@ -1,0 +1,96 @@
+.home-container {
+    min-height: 100vh;
+    padding: 4rem;
+    font-family: 'Lato', sans-serif;
+    scale: none;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+.page-title, .page-subtitle {
+    color: #081828;
+}
+.page-title{
+    font-size: 3rem;
+}
+.page-subtitle{
+    font-size: 1.5rem;
+}
+.card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+    .card {
+        flex: 1 1 300px;
+        min-width: 260px;
+        border-radius: 20px;
+        padding: 2rem;
+        background: linear-gradient(145deg, #081828, #0b2136);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .card .comment {
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+        color: #d7d7d7;
+        font-weight: 500;
+    }
+    .card p,comment {
+        margin-top: 0;
+    }
+    .card h2 {
+        font-size: 2.2rem;
+        margin:0;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .card .value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: white;
+        margin: 0;
+    }
+
+    .chart-card {
+        h2{
+            color: #081828;
+        }
+        color: #081828;
+        background: #b8ddfa;
+        height: 220px;
+    }
+    .yellow {
+        background: linear-gradient(135deg, #101f38, #1e2b4a);
+        color: #facc15; /* Jaune doré doux */
+    }
+    .green {
+        background: linear-gradient(135deg, #112f26, #1e4436);
+        color: #4ade80; /* Vert pastel */
+    }
+
+}
+.table-container{
+    width: 100%;
+}
+
+
+
+
+@media screen and (max-width: 768px) {
+    .home-container {
+        padding: 1rem;
+    }
+
+    .card .value {
+        font-size: 2rem;
+    }
+
+    .chart-card {
+        height: 200px;
+    }
+}

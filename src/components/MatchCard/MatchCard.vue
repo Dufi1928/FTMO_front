@@ -1,36 +1,28 @@
 <script setup>
 import './MatchCard.css'
 
-/* ─── Déclaration des props ─────────────────────────────────────────────── */
 defineProps({
-    /* Équipe à domicile */
-    homeName: {type: String, required: true},
-    homeLogo: {type: String, required: true}, // url ou chemin de l’image
-
-    /* Équipe visiteuse */
-    awayName: {type: String, required: true},
-    awayLogo: {type: String, required: true},
-
-    /* Infos match */
-    matchDate: {type: String, required: true}, // ex. "2025-04-23"
-    matchTime: {type: String, required: true}, // ex. "14h30"
-    venue: {type: String, required: true}, // ex. "Salle Victor Hugo, Lille"
-
-    /* Lien “Détails du match” */
-    detailsUrl: {type: String, required: true},
-
-    /* Optionnel : couleur de fond du header (haut violet clair sur la maquette) */
-    headerBg: {type: String, default: '#F4F4FF'}
+    homeName: { type: String, required: true },
+    buttonMessage: { type: String, required: false, default: "Détails du match" },
+    showBtn: { type: Boolean, required: true },
+    homeLogo: { type: String, required: true },
+    awayName: { type: String, required: true },
+    awayLogo: { type: String, required: true },
+    matchDate: { type: String, required: true },
+    matchTime: { type: String, required: true },
+    venue: { type: String, required: true },
+    detailsUrl: { type: String, required: false },
+    onClickDetails: { type: Function, required: false },
+    headerBg: { type: String, default: '#F4F4FF' }
 })
 </script>
 
 <template>
     <div class="match-card">
-        <!-- En-tête avec les équipes -->
         <div class="match-card__header" :style="{ backgroundColor: headerBg }">
             <div class="team">
                 <div class="img-container">
-                    <img :src="homeLogo" :alt="homeName"/>
+                    <img :src="homeLogo" :alt="homeName" />
                 </div>
                 <span class="team-name">{{ homeName }}</span>
             </div>
@@ -39,30 +31,34 @@ defineProps({
 
             <div class="team">
                 <div class="img-container">
-                    <img :src="awayLogo" :alt="awayName"/>
+                    <img :src="awayLogo" :alt="awayName" />
                 </div>
                 <span class="team-name">{{ awayName }}</span>
             </div>
         </div>
 
-        <!-- Infos pratiques -->
         <div class="match-card__body">
-                <div>
-                    <div class="match-card__body--item-wraper">
-                        <img src="../../assets/icons/match_calender.svg" alt="">
-                        <i class="icon icon-date"/> {{ matchDate }}
-                    </div>
-                    <div class="match-card__body--item-wraper">
-                        <img src="../../assets/icons/match_time.svg" alt="">
-                        <i class="icon icon-time"/> {{ matchTime }}
-                    </div>
-                    <div class="match-card__body--item-wraper">
-                        <img src="../../assets/icons/match_place.svg" alt="">
-                        <i class="icon icon-location"/> {{ venue }}
-                    </div>
+            <div>
+                <div class="match-card__body--item-wraper">
+                    <img src="../../assets/icons/match_calender.svg" alt="" />
+                    {{ matchDate }}
                 </div>
+                <div class="match-card__body--item-wraper">
+                    <img src="../../assets/icons/match_time.svg" alt="" />
+                    {{ matchTime }}
+                </div>
+                <div class="match-card__body--item-wraper">
+                    <img src="../../assets/icons/match_place.svg" alt="" />
+                    {{ venue }}
+                </div>
+            </div>
 
-            <a :href="detailsUrl" class="btn-details">Détails du match</a>
+            <template v-if="showBtn">
+                <button class="btn-details" @click="onClickDetails">{{ buttonMessage }}</button>
+            </template>
+            <template v-if="detailsUrl">
+                <a :href="detailsUrl" class="btn-details">{{ buttonMessage }}</a>
+            </template>
         </div>
     </div>
 </template>

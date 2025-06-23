@@ -11,32 +11,32 @@
         />
         -->
 
-        <div class="ranking-table-wrapper" id="rank-scroll">
+        <div class="ranking-table-wrapper"  id="rank-scroll" :style="{ width }">
             <!-- Bloc « pinned » : colonnes marquées pinned = true -->
             <div class="rank-pinned">
                 <table class="ranking-table ranking-left">
                     <thead>
-                    <tr>
+                    <tr class="ranking-table-row row-height-50" >
                         <th v-for="col in pinnedColumns" :key="col.field">
                             {{ col.label }}
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(row, rowIndex) in sortedRows" :key="rowIndex">
+                    <tr v-for="(row, rowIndex) in sortedRows" :key="rowIndex" :class="rowHeightClass">
                         <td
                             v-for="col in pinnedColumns"
                             :key="col.field"
                             :class="computeCellClass(col, row)"
                             :style="computeCellStyle(col)"
                         >
-                            <!-- Si vous avez un formatter, on l’utilise : -->
-                            <span v-if="col.formatter">
-                  {{ col.formatter(row[col.field], row) }}
-                </span>
+                            <span v-if="col.html" v-html="col.html(row)" />
+                            <span v-else-if="col.formatter">
+            {{ col.formatter(row[col.field], row) }}
+          </span>
                             <span v-else>
-                  {{ row[col.field] }}
-                </span>
+            {{ row[col.field] }}
+          </span>
                         </td>
                     </tr>
                     </tbody>
@@ -47,7 +47,7 @@
             <div class="rank-scroll">
                 <table class="ranking-table ranking-main">
                     <thead>
-                    <tr>
+                    <tr class="ranking-table-row row-height-50"  >
                         <th
                             v-for="col in scrollableColumns"
                             :key="col.field"
@@ -56,25 +56,26 @@
                         >
                             {{ col.label }}
                             <span v-if="col.sortable && sortKey === col.field">
-                  {{ sortAsc ? '▲' : '▼' }}
-                </span>
+            {{ sortAsc ? '▲' : '▼' }}
+          </span>
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(row, rowIndex) in sortedRows" :key="rowIndex">
+                    <tr v-for="(row, rowIndex) in sortedRows" :key="rowIndex" :class="rowHeightClass">
                         <td
                             v-for="col in scrollableColumns"
                             :key="col.field"
                             :class="computeCellClass(col, row)"
                             :style="computeCellStyle(col)"
                         >
-                <span v-if="col.formatter">
-                  {{ col.formatter(row[col.field], row) }}
-                </span>
+                            <span v-if="col.html" v-html="col.html(row)" />
+                            <span v-else-if="col.formatter">
+            {{ col.formatter(row[col.field], row) }}
+          </span>
                             <span v-else>
-                  {{ row[col.field] }}
-                </span>
+            {{ row[col.field] }}
+          </span>
                         </td>
                     </tr>
                     </tbody>
@@ -92,6 +93,7 @@ const props = defineProps({
     // Chaque colonne peut maintenant comporter, en plus de field/label/pinned/sortable/formatter :
     //   - color      : string CSS (ex. '#12B221' ou 'green'), qui sera passée en style sur le <td>
     //   - cellClass  : string (nom de classe CSS), qui sera appliqué au <td>
+
     columns: {
         type: Array,
         required: true,
@@ -107,6 +109,10 @@ const props = defineProps({
         type: String,
         default: ''
     },
+    row_height: {
+        type: String,
+        default: '70'
+    },
     linkText: {
         type: String,
         default: ''
@@ -118,8 +124,13 @@ const props = defineProps({
     background: {
         type: String,
         default: '#FFFFFF'
+    },
+    width: {
+        type: String,
+        default: '80%'  // largeur par défaut
     }
 })
+const rowHeightClass = computed(() => `row-height-${props.row_height.replace('px', '')}`)
 
 // --- TRI ---
 const sortKey = ref(null)
@@ -183,4 +194,6 @@ function computeCellClass(col, row) {
 function computeCellStyle(col) {
     return col.color ? { color: col.color } : {}
 }
+
+
 </script>

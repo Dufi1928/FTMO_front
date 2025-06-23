@@ -1,0 +1,144 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.dashboard-page-container {
+    width: 100% !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+    background-color: #F7F7F7 !important;
+}
+.dashboard-menu {
+    margin: 0;
+    width: 240px;
+    transition: width 0.3s;
+    position: fixed;
+    border-radius:0 25px 25px 0 ;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    /*background: linear-gradient(145deg, #081828, #0b2136);*/
+    background-color: var(--c-footer-bg);
+    color: white;
+    padding: 100px 1rem;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-menu.collapsed {
+    width: 60px;
+}
+
+.toggle-button-floating {
+    position: fixed;
+    top: 20px;
+    transform: translateX(-50%);
+    background: #081828;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s, transform 0.3s, left 0.3s;
+    z-index: 1100;
+}
+
+.toggle-button-floating:hover {
+    background: #3138aa;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+.menu-title {
+    font-family: Lato, sans-serif;
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    text-align: left;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+
+.menu-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-nav li {
+    min-width: 100px;
+    font-family: Lato, sans-serif;
+    margin-bottom: 1.2rem;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.dashboard-logo{
+    display: flex;
+    width: 90%;
+    margin-bottom: 40px;
+}
+.menu-nav a {
+
+    font-family: Lato, sans-serif;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 6px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.menu-nav li.active a {
+    font-family: Lato, sans-serif;
+    background-color: rgba(255, 255, 255, 0.15);
+    font-weight: bold;
+}
+
+.menu-nav a:hover {
+
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.main-content {
+    width: calc(100% - 270px);
+    overflow: hidden;
+    position: relative;
+    margin-left: 270px;
+    transition: margin-left 0.3s;
+    font-family: "Lato", sans-serif;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-image: url("../../../../assets/images/login-background.png");
+}
+
+.main-content.collapsed {
+    width: calc(100% - 80px);
+    overflow: hidden;
+    margin-left: 80px;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+}

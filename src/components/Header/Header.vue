@@ -107,7 +107,7 @@ const headerClasses = computed(() => {
                     <img src="../../assets/icons/calendar-lines_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
                     Calendrier
                 </a>
-                <a href="#">
+                <a href="/about">
                     <img src="../../assets/icons/question-mark-circle.svg" :class="{ 'd-none': theme === 'light' }" />
                     <img src="../../assets/icons/question-mark-circle_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
                     À propos

@@ -30,7 +30,7 @@ async function render(pageContext) {
 
     <title>FTMO</title>
   </head>
-  <body>
+  <body style="margin: 0; width: 100vw">
     <div id="app">${dangerouslySkipEscape(appHtml)}</div>
   </body>
 </html>`

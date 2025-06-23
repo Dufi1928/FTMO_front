@@ -12,6 +12,7 @@ import Footer from "../../components/Footer/Footer.vue";
 import MapProClubs from "../../components/Map/MapProClubs.vue"
 
 
+
 const auth = useAuthStore()
 const cities = ref([])
 

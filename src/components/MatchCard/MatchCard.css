@@ -2,7 +2,7 @@
     border: 2px solid #EFEFEF;
     border-radius: 8px;
     max-width: 400px;
-    height: 435px;
+    min-height: 435px;
 }
 
 .match-card__header {
@@ -55,6 +55,7 @@
     }
 }
 .match-card__body {
+    background: white;
     height: 235px;
     padding: 32px 16px;
     display: flex;
@@ -88,4 +89,24 @@
     padding: 16px 48px;
     border: 1px solid #3138AA;
 }
+button.btn-details {
+    width: 90%;
+    font-family: Lato, sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: auto;
+    color: #3138AA;
+    text-align: center;
+    border-radius: 8px;
+    text-decoration: none;
+    padding: 16px 48px;
+    background: transparent;
+    border: 1px solid #3138AA;
+}
+.btn-details:hover {
+    background: #3138AA;
+    color: white;
+    transition: 0.3s;
+}
+
 

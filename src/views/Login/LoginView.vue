@@ -26,7 +26,7 @@ async function handleSubmit() {
             error.value = data.detail || 'Identifiants invalides'
         } else {
             auth.setTokens(data.access, data.refresh)
-            window.location.href = '/'          // redirection manuelle
+            window.location.href = '/protected/admin/dashboard'          // redirection manuelle
         }
     } catch {
         error.value = 'Erreur réseau'
@@ -41,6 +41,7 @@ console.log('⚙️ LoginView mounted')
     <Header :key="auth.renderKey" :alwaysBlack="true" />
     <main class="login-container">
         <form class="login-form" @submit.prevent="handleSubmit">
+        <h1>Connection</h1>
             <label>
                 Email
                 <input type="email" v-model="email" required />
@@ -52,6 +53,7 @@ console.log('⚙️ LoginView mounted')
             <button type="submit" :disabled="loading">
                 {{ loading ? 'Connexion…' : 'Se connecter' }}
             </button>
+            <a href="/"  class=" reset-password login-error">Mot de pass Oubliee</a>
             <p v-if="error" class="login-error">{{ error }}</p>
         </form>
     </main>

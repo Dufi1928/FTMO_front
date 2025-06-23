@@ -11,7 +11,14 @@
     --width-pinned: 160px;       /* largeur de la colonne « pinned » */
     --min-width-mobile: 720px;   /* largeur min du tableau scrollable */
     font-family: Lato, sans-serif;
-    --row-h: 72px;
+}
+.rank-scroll {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE/Edge */
+}
+
+.rank-scroll::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 /* ========== CONTENEUR GLOBAL ========== */
@@ -41,15 +48,33 @@
     border-radius: 10px;
 }
 
-.ranking-table tr {
-    height: var(--row-h);
-}
 .ranking-table th,
 .ranking-table td {
     height: 100%;
     line-height: calc(var(--row-h) - 2 * 0.7rem);
 }
-
+.table-header {
+    background:#081828;
+    color: white;
+}
+.row-height-72 {
+    line-height: 72px;
+}
+.row-height-50{
+    height: 90px;
+}
+.row-height-80 {
+    line-height: 80px;
+}
+.row-height-90 {
+    line-height: 90px !important;
+}
+.row-height-100 {
+    line-height: 100px;
+}
+.row-height-120 {
+    line-height: 120px;
+}
 /* ========== TABLE COMMUNE (desktop) ========== */
 .ranking-table {
     width: 100%;
@@ -166,5 +191,8 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.ranking-table-row{
+    height: var(--row-h);
 }
 
