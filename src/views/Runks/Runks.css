@@ -38,3 +38,32 @@
     opacity: 0.03;
     z-index: 0;
 }
+
+.runks-tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0;
+    margin: 2rem auto;
+}
+
+.runks-tags button {
+    background: #ffffff;
+    border: 2px solid #2436d4;
+    color: #2436d4;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.runks-tags button.active {
+    background: #2436d4;
+    color: #ffffff;
+}
+
+.coming-soon {
+    text-align: center;
+    margin: 2rem 0;
+}
