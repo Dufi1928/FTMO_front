@@ -116,3 +116,43 @@
     overflow: visible !important; /* force l’overflow */
 }
 
+
+.schedule-list {
+    font-family: Lato, sans-serif;
+    font-weight: 400;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+}
+
+.schedule-item {
+    display: grid;
+    grid-template-columns: 60px 120px 1fr;
+    align-items: center;
+    background: #f8f9fb;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.schedule-day {
+    font-weight: 600;
+    color: #2436d4; /* bleu accent */
+}
+
+.schedule-time {
+    font-family: monospace;
+    color: #333;
+}
+
+.schedule-audience {
+    font-style: italic;
+    color: #666;
+}
+
+.schedule-empty {
+    padding: 0.6rem;
+    color: #999;
+    font-style: italic;
+}

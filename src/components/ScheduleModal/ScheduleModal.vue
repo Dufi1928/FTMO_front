@@ -1,57 +1,82 @@
 <script setup>
-import { ref, watch } from 'vue'
+import {ref, watch, onMounted} from 'vue'
 import './ScheduleModal.css'
 
-// Props : modèle existant (ou null) + callbacks
 const props = defineProps({
-    model: { type: Object, default: null }
+    model: {type: Object, default: null},   // {id, weekday, start_time, end_time, categories[]}
 })
 const emit = defineEmits(['close', 'saved'])
 
-// Formulaire local (copie du modèle)
 const form = ref({
     id: null,
     weekday: 'mon',
     start_time: '',
     end_time: '',
-    categories: []
+    category_ids: [] // ✅ IDs, pas des objets
 })
 
-// Quand on reçoit un modèle → préremplir
 watch(() => props.model, (val) => {
-    if (val) form.value = { ...val }
-    else {
+    if (val) {
         form.value = {
-            id: null,
-            weekday: 'mon',
-            start_time: '',
-            end_time: '',
-            categories: []
+            id: val.id ?? null,
+            weekday: val.weekday ?? 'mon',
+            start_time: (val.start_time || '').slice(0, 5), // "HH:MM"
+            end_time: (val.end_time || '').slice(0, 5),
+            category_ids: (val.categories || []).map(c => c.id) // ✅ extraire les ids
         }
+    } else {
+        form.value = {id: null, weekday: 'mon', start_time: '', end_time: '', category_ids: []}
     }
-}, { immediate: true })
+}, {immediate: true})
 
-// Map des jours
 const weekdays = [
-    { code: 'mon', label: 'Lundi' },
-    { code: 'tue', label: 'Mardi' },
-    { code: 'wed', label: 'Mercredi' },
-    { code: 'thu', label: 'Jeudi' },
-    { code: 'fri', label: 'Vendredi' },
-    { code: 'sat', label: 'Samedi' },
-    { code: 'sun', label: 'Dimanche' },
+    {code: 'mon', label: 'Lundi'},
+    {code: 'tue', label: 'Mardi'},
+    {code: 'wed', label: 'Mercredi'},
+    {code: 'thu', label: 'Jeudi'},
+    {code: 'fri', label: 'Vendredi'},
+    {code: 'sat', label: 'Samedi'},
+    {code: 'sun', label: 'Dimanche'},
 ]
 
-// Simples catégories pour démo
-const categoriesOptions = [
-    { code: 'junior', label: 'Jeunes / Juniors' },
-    { code: 'senior', label: 'Adultes / Séniors' },
-    { code: 'veteran', label: 'Vétérans' },
-]
+const categoriesOptions = ref([]) // [{id, code, label}]
 
-// Sauvegarde → remonte l’évènement
-function save() {
-    emit('saved', { ...form.value })
+async function loadCategories() {
+    const res = await fetch('https://ftmo.bob-digital.com/api/audience-categories/', {
+        headers: {Authorization: `Bearer ${localStorage.getItem('accessToken')}`},
+    })
+    if (!res.ok) throw new Error('Impossible de charger les catégories')
+    categoriesOptions.value = await res.json()
+}
+
+onMounted(loadCategories)
+
+async function save() {
+    const token = localStorage.getItem('accessToken')
+    const headers = {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+    }
+
+    const payload = {
+        weekday: form.value.weekday,
+        start_time: form.value.start_time, // "HH:MM"
+        end_time: form.value.end_time,
+        category_ids: form.value.category_ids,
+    }
+
+    const base = 'https://ftmo.bob-digital.com/api/schedules/'
+    const url = form.value.id ? `${base}${form.value.id}/` : base
+    const method = form.value.id ? 'PATCH' : 'POST'
+
+    const res = await fetch(url, {method, headers, body: JSON.stringify(payload)})
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.detail || 'Erreur lors de la sauvegarde du créneau')
+    }
+
+    const saved = await res.json()
+    emit('saved', saved) // ✅ renvoyer l’objet retourné par l’API
 }
 </script>
 
@@ -70,18 +95,20 @@ function save() {
 
                 <div class="form-group">
                     <label>Début</label>
-                    <input type="time" v-model="form.start_time" required />
+                    <input type="time" v-model="form.start_time" required/>
                 </div>
 
                 <div class="form-group">
                     <label>Fin</label>
-                    <input type="time" v-model="form.end_time" required />
+                    <input type="time" v-model="form.end_time" required/>
                 </div>
 
                 <div class="form-group">
-                    <label>Catégorie</label>
-                    <select v-model="form.categories" multiple>
-                        <option v-for="c in categoriesOptions" :key="c.code" :value="c">{{ c.label }}</option>
+                    <label>Catégories</label>
+                    <select v-model="form.category_ids" multiple>
+                        <option v-for="c in categoriesOptions" :key="c.id" :value="c.id">
+                            {{ c.label }}
+                        </option>
                     </select>
                 </div>
 
@@ -93,4 +120,3 @@ function save() {
         </div>
     </div>
 </template>
-

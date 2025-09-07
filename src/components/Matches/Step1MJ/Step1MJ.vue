@@ -1,14 +1,12 @@
 /* Step1MJ.vue */
 
-
-
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 
 const props = defineProps({ team1: Array, team2: Array, matchId: Number })
 const emit = defineEmits(['next-step', 'error'])
 
-// Initialize form
+// Initialize form (on garde la même structure d'affichage)
 const form = ref([
     { match_identifier: 'F-F', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
     { match_identifier: 'F-J', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
@@ -16,7 +14,7 @@ const form = ref([
     { match_identifier: 'J-J', home_id: null, visitor_id: null, home_score: '', visitor_score: '' }
 ])
 
-// Pools
+// Pools (inchangé)
 const femmesJeunesHome = computed(() =>
     props.team1.filter(
         p => p.civility === 'Mme' || new Date(p.birth_date) > new Date(new Date().getFullYear() - 15, 7, 31)
@@ -28,7 +26,7 @@ const femmesJeunesAway = computed(() =>
     )
 )
 
-// Totals
+// Totals (inchangé)
 const totalHome = computed(() =>
     form.value.reduce((sum, s) => sum + (parseInt(s.home_score) || 0), 0)
 )
@@ -36,22 +34,33 @@ const totalAway = computed(() =>
     form.value.reduce((sum, s) => sum + (parseInt(s.visitor_score) || 0), 0)
 )
 
-// Validation
+// Validation (inchangé)
 const isValid = computed(() =>
     form.value.every(
         s => s.home_id && s.visitor_id && s.home_score !== '' && s.visitor_score !== ''
     )
 )
 
-// Prefill
+// Prefill (on garde le comportement, on s'adapte juste aux nouveaux champs du back)
 async function fetchExistingSets() {
+    const token = localStorage.getItem('accessToken')
     try {
         const res = await fetch(
-            `https://ftmo.bob-digital.com/api/matchsets/?match=${props.matchId}`
+            `https://ftmo.bob-digital.com/api/matchsets/?match=${props.matchId}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                }
+            }
         )
+        if (res.status === 401 || res.status === 403) {
+            throw new Error('Non autorisé : token manquant/expiré ou droits insuffisants')
+        }
         if (!res.ok) throw new Error('Erreur récupération des sets existants')
         return await res.json()
-    } catch {
+    } catch (e) {
+        emit('error', e.message)
         return []
     }
 }
@@ -61,15 +70,18 @@ onMounted(async () => {
     sets.forEach(set => {
         const idx = form.value.findIndex(f => f.match_identifier === set.match_identifier)
         if (idx !== -1) {
-            form.value[idx].home_id = set.home_player || null
-            form.value[idx].visitor_id = set.away_player || null
+            // Compat old/new back : on lit d'abord les tableaux (nouveau), sinon les anciens champs
+            const home = Array.isArray(set.home_players) ? set.home_players[0] : set.home_player
+            const away = Array.isArray(set.away_players) ? set.away_players[0] : set.away_player
+            form.value[idx].home_id = home ?? null
+            form.value[idx].visitor_id = away ?? null
             form.value[idx].home_score = Number(set.home_points)
             form.value[idx].visitor_score = Number(set.away_points)
         }
     })
 })
 
-// Auto-balance and prevent 3-3
+// Auto-balance and prevent 3-3 (inchangé)
 watch(
     () => form.value.map(r => ({ h: r.home_score, v: r.visitor_score })),
     (newVals, oldVals) => {
@@ -95,27 +107,24 @@ watch(
     }, { deep: true }
 )
 
-// Save
+// Save (adapté au nouveau back : tableaux + set_type 'single')
 async function saveSets() {
     const payload = form.value.map(s => ({
         match: props.matchId,
-        set_type: 'simple_mj',
+        set_type: 'single',                 // <- nouveau type harmonisé
         match_identifier: s.match_identifier,
-        home_player: s.home_id,
-        away_player: s.visitor_id,
+        home_players: [s.home_id],          // <- tableaux d'IDs (taille 1)
+        away_players: [s.visitor_id],       // <- tableaux d'IDs (taille 1)
         home_points: s.home_score,
         away_points: s.visitor_score
     }))
     try {
         const token = localStorage.getItem('accessToken')
-        const res = await fetch(
-            `https://ftmo.bob-digital.com/api/matchsets/bulk_create/`,
-            {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }
-        )
+        const res = await fetch(`https://ftmo.bob-digital.com/api/matchsets/bulk_create/`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
         if (!res.ok) throw new Error('Erreur sauvegarde MJ')
         emit('next-step')
     } catch (err) {
@@ -174,7 +183,6 @@ async function saveSets() {
     </div>
     <button class="btn-primary save" @click="saveSets" :disabled="!isValid">Sauvegarder</button>
 </template>
-
 
 <style scoped>
 /* Styles hérités de MatchEditor.css */

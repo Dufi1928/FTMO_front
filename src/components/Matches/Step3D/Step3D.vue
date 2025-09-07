@@ -19,8 +19,8 @@
                     <div class="select-group">
                         <span class="type-badge">{{ requiredType(s.match_identifier, 0) }}</span>
                         <select class="control-select" v-model.number="form[i].home_ids[0]">
-                            <option value="">Sélectionner</option>
-                            <option v-for="p in homeOptionsFor(i, 0)" :key="p.id" :value="p.id">
+                            <option :value="null">Sélectionner</option>
+                            <option v-for="p in homeOptionsFor(i, 0)" :key="p.id" :value="Number(p.id)">
                                 {{ p.first_name }} {{ p.last_name }}
                             </option>
                         </select>
@@ -28,8 +28,8 @@
                     <div class="select-group">
                         <span class="type-badge">{{ requiredType(s.match_identifier, 1) }}</span>
                         <select class="control-select" v-model.number="form[i].home_ids[1]">
-                            <option value="">Sélectionner</option>
-                            <option v-for="p in homeOptionsFor(i, 1)" :key="p.id" :value="p.id">
+                            <option :value="null">Sélectionner</option>
+                            <option v-for="p in homeOptionsFor(i, 1)" :key="p.id" :value="Number(p.id)">
                                 {{ p.first_name }} {{ p.last_name }}
                             </option>
                         </select>
@@ -41,8 +41,8 @@
                     <div class="select-group">
                         <span class="type-badge">{{ requiredType(s.match_identifier, 0) }}</span>
                         <select class="control-select" v-model.number="form[i].visitor_ids[0]">
-                            <option value="">Sélectionner</option>
-                            <option v-for="p in awayOptionsFor(i, 0)" :key="p.id" :value="p.id">
+                            <option :value="null">Sélectionner</option>
+                            <option v-for="p in awayOptionsFor(i, 0)" :key="p.id" :value="Number(p.id)">
                                 {{ p.first_name }} {{ p.last_name }}
                             </option>
                         </select>
@@ -50,8 +50,8 @@
                     <div class="select-group">
                         <span class="type-badge">{{ requiredType(s.match_identifier, 1) }}</span>
                         <select class="control-select" v-model.number="form[i].visitor_ids[1]">
-                            <option value="">Sélectionner</option>
-                            <option v-for="p in awayOptionsFor(i, 1)" :key="p.id" :value="p.id">
+                            <option :value="null">Sélectionner</option>
+                            <option v-for="p in awayOptionsFor(i, 1)" :key="p.id" :value="Number(p.id)">
                                 {{ p.first_name }} {{ p.last_name }}
                             </option>
                         </select>
@@ -61,13 +61,13 @@
                 <!-- SCORES -->
                 <td>
                     <select class="control-select" v-model.number="form[i].home_score">
-                        <option value="">-</option>
+                        <option :value="null">-</option>
                         <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
                     </select>
                 </td>
                 <td>
                     <select class="control-select" v-model.number="form[i].visitor_score">
-                        <option value="">-</option>
+                        <option :value="null">-</option>
                         <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
                     </select>
                 </td>
@@ -83,7 +83,14 @@
         </table>
     </div>
 
-    <button class="btn-primary save" @click="saveSets" :disabled="!isValid">Sauvegarder</button>
+    <!-- Message de succès -->
+    <transition name="fade">
+        <div v-if="showSuccess" class="alert-success" role="status" aria-live="polite">
+            ✅ Sauvegarde effectuée
+        </div>
+    </transition>
+
+    <button class="btn-primary save" @click="saveSets" :disabled="!isValid">Valider</button>
 </template>
 
 <script setup>
@@ -92,26 +99,24 @@ import { ref, computed, onMounted, watch } from 'vue'
 const props = defineProps({ team1: Array, team2: Array, matchId: Number })
 const emit = defineEmits(['next-step', 'error'])
 
+const showSuccess = ref(false)
+
 const form = ref([
-    { match_identifier: 'D-M-J', home_ids: [null, null], visitor_ids: [null, null], home_score: '', visitor_score: '' },
-    { match_identifier: 'D-M-F', home_ids: [null, null], visitor_ids: [null, null], home_score: '', visitor_score: '' },
-    { match_identifier: 'D-F-J', home_ids: [null, null], visitor_ids: [null, null], home_score: '', visitor_score: '' }
+    { match_identifier: 'D-M-J', home_ids: [null, null], visitor_ids: [null, null], home_score: null, visitor_score: null },
+    { match_identifier: 'D-M-F', home_ids: [null, null], visitor_ids: [null, null], home_score: null, visitor_score: null },
+    { match_identifier: 'D-F-J', home_ids: [null, null], visitor_ids: [null, null], home_score: null, visitor_score: null }
 ])
 
 const hommesHome = computed(() => props.team1.filter(p => p.civility === 'Mr'))
 const hommesAway = computed(() => props.team2.filter(p => p.civility === 'Mr'))
 const femmesHome = computed(() => props.team1.filter(p => p.civility === 'Mme'))
 const femmesAway = computed(() => props.team2.filter(p => p.civility === 'Mme'))
-const jeunesHome = computed(() =>
-    props.team1.filter(
-        p => new Date(p.birth_date) > new Date(new Date().getFullYear() - 15, 7, 31)
-    )
-)
-const jeunesAway = computed(() =>
-    props.team2.filter(
-        p => new Date(p.birth_date) > new Date(new Date().getFullYear() - 15, 7, 31)
-    )
-)
+const jeunesHome = computed(() => props.team1.filter(p =>
+    new Date(p.birth_date) > new Date(new Date().getFullYear() - 15, 7, 31)
+))
+const jeunesAway = computed(() => props.team2.filter(p =>
+    new Date(p.birth_date) > new Date(new Date().getFullYear() - 15, 7, 31)
+))
 
 function requiredType(matchId, pos) {
     if (matchId === 'D-M-J') return pos === 0 ? 'Homme' : 'Jeune'
@@ -139,68 +144,103 @@ const totalHome = computed(() => form.value.reduce((sum, s) => sum + (parseInt(s
 const totalAway = computed(() => form.value.reduce((sum, s) => sum + (parseInt(s.visitor_score) || 0), 0))
 
 const isValid = computed(() =>
-    form.value.every(s =>
-        s.home_ids.every(id => id) &&
-        s.visitor_ids.every(id => id) &&
-        s.home_score !== '' &&
-        s.visitor_score !== ''
-    )
+    form.value.every(s => {
+        const h = s.home_ids
+        const a = s.visitor_ids
+        const allIds = [...h, ...a]
+        const bothFilled = h.every(Number.isInteger) && a.every(Number.isInteger)
+        const twoEach = h.length === 2 && a.length === 2
+        const noDup = new Set(allIds).size === allIds.length
+        const scoresOk =
+            Number.isInteger(s.home_score) && s.home_score >= 1 && s.home_score <= 3 &&
+            Number.isInteger(s.visitor_score) && s.visitor_score >= 1 && s.visitor_score <= 3
+        return twoEach && bothFilled && noDup && scoresOk
+    })
 )
 
-/* Auto-règles de score (3-0 / 0-3) */
+/* ---------- Normalisation d’ordre au chargement ---------- */
+const playerById = (teamArr, id) => teamArr.find(p => Number(p.id) === Number(id)) || null
+const isJeune = (p) => {
+    if (!p?.birth_date) return false
+    const d = new Date(p.birth_date)
+    const cutoff = new Date(new Date().getFullYear() - 15, 7, 31) // 31 août
+    return d > cutoff
+}
+const fitsType = (p, type) => {
+    if (!p) return false
+    if (type === 'Homme') return p.civility === 'Mr'
+    if (type === 'Femme') return p.civility === 'Mme'
+    if (type === 'Jeune') return isJeune(p)
+    return false
+}
+/** Recase [idA,idB] dans [slot0, slot1] selon matchId et team */
+function normalizePair(ids, matchId, teamArr) {
+    const want0 = requiredType(matchId, 0)
+    const want1 = requiredType(matchId, 1)
+    const [a, b] = (ids || []).map(n => Number(n)).filter(Number.isInteger)
+    const pa = playerById(teamArr, a)
+    const pb = playerById(teamArr, b)
+
+    // Si déjà bon, ne touche pas
+    if (fitsType(pa, want0) && fitsType(pb, want1)) return [a, b]
+    if (fitsType(pa, want1) && fitsType(pb, want0)) return [b, a]
+
+    // Sinon essaie de remplir chaque slot avec ce qui “matche”
+    let s0 = null, s1 = null
+    if (fitsType(pa, want0)) s0 = a
+    else if (fitsType(pb, want0)) s0 = b
+
+    const rem = [a, b].filter(x => x !== s0)
+    const pr0 = playerById(teamArr, rem[0])
+    const pr1 = playerById(teamArr, rem[1])
+
+    if (!s1) {
+        if (fitsType(pr0, want1)) s1 = rem[0]
+        else if (fitsType(pr1, want1)) s1 = rem[1]
+    }
+
+    // Fallback : garde l’ordre si un des deux ne correspond pas (évite de perdre l’info)
+    if (s0 == null) s0 = a ?? null
+    if (s1 == null) s1 = (s0 === a ? b : a) ?? null
+
+    return [s0 ?? null, s1 ?? null]
+}
+
+/* ---------- Auto-règles de score ---------- */
 watch(
     () => form.value.map(r => ({ h: r.home_score, v: r.visitor_score })),
     (newVals, oldVals) => {
         newVals.forEach((val, i) => {
-            const prev = oldVals[i] || { h: '', v: '' }
+            const prev = oldVals?.[i] ?? { h: null, v: null }
             if (val.h !== prev.h) {
-                if (val.h !== '' && val.h !== 3) {
-                    form.value[i].visitor_score = 3
-                } else if (val.h === 3 && form.value[i].visitor_score === 3) {
-                    form.value[i].visitor_score = ''
-                }
+                if (val.h != null && val.h !== 3) form.value[i].visitor_score = 3
+                else if (val.h === 3 && form.value[i].visitor_score === 3) form.value[i].visitor_score = null
             }
             if (val.v !== prev.v) {
-                if (val.v !== '' && val.v !== 3) {
-                    form.value[i].home_score = 3
-                } else if (val.v === 3 && form.value[i].home_score === 3) {
-                    form.value[i].home_score = ''
-                }
+                if (val.v != null && val.v !== 3) form.value[i].home_score = 3
+                else if (val.v === 3 && form.value[i].home_score === 3) form.value[i].home_score = null
             }
         })
     },
     { deep: true }
 )
 
-/* Synchronisation du joueur masculin entre D-M-J et D-M-F */
-watch(
-    () => form.value[0].home_ids[0],
-    val => {
-        if (form.value[1].home_ids[0] !== val) form.value[1].home_ids[0] = val
-    }
-)
-watch(
-    () => form.value[1].home_ids[0],
-    val => {
-        if (form.value[0].home_ids[0] !== val) form.value[0].home_ids[0] = val
-    }
-)
-watch(
-    () => form.value[0].visitor_ids[0],
-    val => {
-        if (form.value[1].visitor_ids[0] !== val) form.value[1].visitor_ids[0] = val
-    }
-)
-watch(
-    () => form.value[1].visitor_ids[0],
-    val => {
-        if (form.value[0].visitor_ids[0] !== val) form.value[0].visitor_ids[0] = val
-    }
-)
+/* ---------- Sync masculin entre D-M-J et D-M-F ---------- */
+watch(() => form.value[0].home_ids[0], v => { if (form.value[1].home_ids[0] !== v) form.value[1].home_ids[0] = v })
+watch(() => form.value[1].home_ids[0], v => { if (form.value[0].home_ids[0] !== v) form.value[0].home_ids[0] = v })
+watch(() => form.value[0].visitor_ids[0], v => { if (form.value[1].visitor_ids[0] !== v) form.value[1].visitor_ids[0] = v })
+watch(() => form.value[1].visitor_ids[0], v => { if (form.value[0].visitor_ids[0] !== v) form.value[0].visitor_ids[0] = v })
 
+// GET existants (avec token)
 async function fetchExistingSets() {
+    const token = localStorage.getItem('accessToken')
     try {
-        const res = await fetch(`https://ftmo.bob-digital.com/api/matchsets/?match=${props.matchId}`, { headers: { 'Content-Type': 'application/json' } })
+        const res = await fetch(`https://ftmo.bob-digital.com/api/matchsets/?match=${props.matchId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { Authorization: `Bearer ${token}` } : {})
+            }
+        })
         if (!res.ok) throw new Error('Erreur récupération des sets existants')
         return await res.json()
     } catch {
@@ -213,23 +253,47 @@ onMounted(async () => {
     sets.forEach(set => {
         const idx = form.value.findIndex(f => f.match_identifier === set.match_identifier)
         if (idx === -1) return
-        form.value[idx].home_ids = set.home_players && set.home_players.length ? [...set.home_players] : [null, null]
-        form.value[idx].visitor_ids = set.away_players && set.away_players.length ? [...set.away_players] : [null, null]
-        form.value[idx].home_score = set.home_points
-        form.value[idx].visitor_score = set.away_points
+
+        // ⚠️ Normalisation d’ordre pour que chaque slot ait le bon type
+        const rawHome = Array.isArray(set.home_players) ? set.home_players : []
+        const rawAway = Array.isArray(set.away_players) ? set.away_players : []
+
+        const [h0, h1] = normalizePair(rawHome, set.match_identifier, props.team1)
+        const [a0, a1] = normalizePair(rawAway, set.match_identifier, props.team2)
+
+        form.value[idx].home_ids = [h0, h1]
+        form.value[idx].visitor_ids = [a0, a1]
+        form.value[idx].home_score = Number(set.home_points)
+        form.value[idx].visitor_score = Number(set.away_points)
     })
 })
 
+// Helpers
+const toPair = (arr) => arr.map(v => Number(v)).filter(Number.isInteger)
+const formatErrors = (errs) => errs.map(e => `#${e.index}: ${JSON.stringify(e.error)}`).join('\n')
+
+// SAVE + message succès (inchangé)
 async function saveSets() {
-    const payload = form.value.map(s => ({
-        match: props.matchId,
-        set_type: 'double',
-        match_identifier: s.match_identifier,
-        home_players: s.home_ids,
-        away_players: s.visitor_ids,
-        home_points: s.home_score,
-        away_points: s.visitor_score
-    }))
+    const payload = form.value.map(s => {
+        const home = toPair(s.home_ids)
+        const away = toPair(s.visitor_ids)
+        if (home.length !== 2 || away.length !== 2) {
+            throw new Error('Chaque double doit avoir exactement 2 joueurs sélectionnés par équipe.')
+        }
+        if (new Set([...home, ...away]).size !== 4) {
+            throw new Error('Un même joueur ne peut pas être sélectionné deux fois dans le même set.')
+        }
+        return {
+            match: props.matchId,
+            set_type: 'double',
+            match_identifier: s.match_identifier,
+            home_players: home,
+            away_players: away,
+            home_points: s.home_score,
+            away_points: s.visitor_score
+        }
+    })
+
     try {
         const token = localStorage.getItem('accessToken')
         const res = await fetch(`https://ftmo.bob-digital.com/api/matchsets/bulk_create/`, {
@@ -237,8 +301,15 @@ async function saveSets() {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         })
-        if (!res.ok) throw new Error('Erreur sauvegarde D')
-        emit('next-step')
+        const data = await res.json().catch(() => ({}))
+        if (!res.ok || (data && Array.isArray(data.errors) && data.errors.length)) {
+            const msg = data && data.errors ? formatErrors(data.errors) : null
+            throw new Error(msg || 'Erreur sauvegarde D')
+        }
+
+        showSuccess.value = true
+        setTimeout(() => (showSuccess.value = false), 2000)
+        setTimeout(() => emit('next-step'), 300)
     } catch (err) {
         emit('error', err.message)
     }
@@ -246,69 +317,20 @@ async function saveSets() {
 </script>
 
 <style scoped>
-/* Conteneur responsive : scroll horizontal si nécessaire */
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-}
-
-/* Table */
-.sets-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.sets-table th, .sets-table td {
-    text-align: left;
-}
-.sets-table td {
-    vertical-align: top;
-    padding: 10px 12px;
-}
-
-/* Groupe label + select avec espace confortable */
-.select-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;             /* espace entre badge et select */
-    margin-bottom: 10px;  /* plus d’espace entre les selects */
-}
-
-/* Badge "Homme/Femme/Jeune" */
-.type-badge {
-    font-size: 12px;
-    padding: 2px 8px;
-    border-radius: 9999px;
-    background: #eef2ff;
-    color: #1f2937;
-    white-space: nowrap;
-    border: 1px solid #e5e7eb;
-}
-
-/* >>> Tous les inputs ont la même largeur, responsive */
-:root {
-    --control-min: 180px;  /* largeur mini confortable */
-    --control-ideal: 22vw; /* s'adapte à l'écran */
-    --control-max: 260px;  /* largeur maxi */
-}
-
-.control-select {
-    width: clamp(var(--control-min), var(--control-ideal), var(--control-max));
-    max-width: 100%;
-    min-width: var(--control-min);
-    display: inline-block;
-}
-
-/* Mobile : badge au-dessus, selects full width */
+.table-responsive { width: 100%; overflow-x: auto; }
+.sets-table { width: 100%; border-collapse: collapse; }
+.sets-table th, .sets-table td { text-align: left; }
+.sets-table td { vertical-align: top; padding: 10px 12px; }
+.select-group { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.type-badge { font-size: 12px; padding: 2px 8px; border-radius: 9999px; background: #eef2ff; color: #1f2937; white-space: nowrap; border: 1px solid #e5e7eb; }
+:root { --control-min: 180px; --control-ideal: 22vw; --control-max: 260px; }
+.control-select { width: clamp(var(--control-min), var(--control-ideal), var(--control-max)); max-width: 100%; min-width: var(--control-min); display: inline-block; }
+.alert-success { margin: 12px 0; padding: 10px 12px; border-radius: 10px; background: #ecfdf5; border: 1px solid #10b98133; color: #065f46; font-weight: 600; }
+.fade-enter-active, .fade-leave-active { transition: opacity .2s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 @media (max-width: 640px) {
-    .select-group {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 6px;
-    }
+    .select-group { flex-direction: column; align-items: stretch; gap: 6px; }
     .type-badge { margin-bottom: 2px; }
     .control-select { width: 100%; }
 }
-
-/* Styles hérités de MatchEditor.css (si présents) */
 </style>
-

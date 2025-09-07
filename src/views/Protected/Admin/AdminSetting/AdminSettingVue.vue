@@ -166,11 +166,15 @@ function openScheduleModal(model = null) {
 function closeScheduleModal() {
     showSchedule.value = false
 }
+function categoriesLabels(sch) {
+    return (sch.categories || []).map(c => c.label).join(', ') || '—'
+}
 function onScheduleSaved(sch) {
     const idx = schedules.value.findIndex((s) => s.id === sch.id)
     if (idx !== -1) schedules.value[idx] = sch
     else schedules.value.push(sch)
     showSchedule.value = false
+    showSnackbar('Créneau enregistré', 'success')
 }
 async function deleteSchedule(sch) {
     if (!confirm('Supprimer ce créneau ?')) return
@@ -268,9 +272,9 @@ async function deleteSchedule(sch) {
                 <tbody>
                 <tr v-for="sch in schedules" :key="sch.id">
                     <td>{{ weekdayLabel(sch.weekday) }}</td>
-                    <td>{{ sch.start_time }}</td>
-                    <td>{{ sch.end_time }}</td>
-                    <td>{{ sch.audience_type }}</td>
+                    <td>{{ sch.start_time?.slice(0,5) }}</td>
+                    <td>{{ sch.end_time?.slice(0,5) }}</td>
+                    <td>{{ categoriesLabels(sch) }}</td> <!-- ✅ -->
                     <td class="actions">
                         <button class="table-button edit" @click="openScheduleModal(sch)">Modifier</button>
                         <button class="table-button delete" @click="deleteSchedule(sch)">Supprimer</button>
