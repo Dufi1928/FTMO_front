@@ -87,7 +87,7 @@ function prevStep() { if (step.value > 1) step.value-- }
 
             <div class="btn-row">
                 <button class="btn-secondary" @click="prevStep" v-if="step > 1">⬅ Retour</button>
-                <button class="btn-primary" @click="nextStep" v-if="step < 3">Suivant ➔</button>
+                <button class="btn-primary btn-primary-step" @click="nextStep" v-if="step < 3">Suivant ➔</button>
             </div>
         </div>
     </transition>

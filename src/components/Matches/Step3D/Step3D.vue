@@ -1,61 +1,88 @@
 <template>
-    <table class="sets-table">
-        <thead>
-        <tr><th>Catégorie</th><th>Dom.</th><th>Ext.</th><th>Score D</th><th>Score E</th></tr>
-        </thead>
-        <tbody>
-        <tr v-for="(s, i) in form" :key="s.match_identifier">
-            <td>{{ s.match_identifier }}</td>
-            <td>
-                <select v-model.number="form[i].home_ids[0]">
-                    <option value="">Sélectionner</option>
-                    <option v-for="p in homeOptionsFor(i, 0)" :key="p.id" :value="p.id">
-                        {{ p.first_name }} {{ p.last_name }}
-                    </option>
-                </select>
-                <select v-model.number="form[i].home_ids[1]">
-                    <option value="">Sélectionner</option>
-                    <option v-for="p in homeOptionsFor(i, 1)" :key="p.id" :value="p.id">
-                        {{ p.first_name }} {{ p.last_name }}
-                    </option>
-                </select>
-            </td>
-            <td>
-                <select v-model.number="form[i].visitor_ids[0]">
-                    <option value="">Sélectionner</option>
-                    <option v-for="p in awayOptionsFor(i, 0)" :key="p.id" :value="p.id">
-                        {{ p.first_name }} {{ p.last_name }}
-                    </option>
-                </select>
-                <select v-model.number="form[i].visitor_ids[1]">
-                    <option value="">Sélectionner</option>
-                    <option v-for="p in awayOptionsFor(i, 1)" :key="p.id" :value="p.id">
-                        {{ p.first_name }} {{ p.last_name }}
-                    </option>
-                </select>
-            </td>
-            <td>
-                <select v-model.number="form[i].home_score">
-                    <option value="">-</option>
-                    <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
-                </select>
-            </td>
-            <td>
-                <select v-model.number="form[i].visitor_score">
-                    <option value="">-</option>
-                    <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
-                </select>
-            </td>
-        </tr>
-        </tbody>
-        <tfoot>
-        <tr>
-            <td colspan="3">Total</td>
-            <td>{{ totalHome }}</td>
-            <td>{{ totalAway }}</td>
-        </tr>
-        </tfoot>
-    </table>
+    <div class="table-responsive">
+        <table class="sets-table">
+            <thead>
+            <tr>
+                <th>Catégorie</th>
+                <th>Dom.</th>
+                <th>Ext.</th>
+                <th>Score D</th>
+                <th>Score E</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(s, i) in form" :key="s.match_identifier">
+                <td class="categ-title">{{ s.match_identifier }}</td>
+
+                <!-- DOMICILE -->
+                <td>
+                    <div class="select-group">
+                        <span class="type-badge">{{ requiredType(s.match_identifier, 0) }}</span>
+                        <select class="control-select" v-model.number="form[i].home_ids[0]">
+                            <option value="">Sélectionner</option>
+                            <option v-for="p in homeOptionsFor(i, 0)" :key="p.id" :value="p.id">
+                                {{ p.first_name }} {{ p.last_name }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <span class="type-badge">{{ requiredType(s.match_identifier, 1) }}</span>
+                        <select class="control-select" v-model.number="form[i].home_ids[1]">
+                            <option value="">Sélectionner</option>
+                            <option v-for="p in homeOptionsFor(i, 1)" :key="p.id" :value="p.id">
+                                {{ p.first_name }} {{ p.last_name }}
+                            </option>
+                        </select>
+                    </div>
+                </td>
+
+                <!-- EXTERIEUR -->
+                <td>
+                    <div class="select-group">
+                        <span class="type-badge">{{ requiredType(s.match_identifier, 0) }}</span>
+                        <select class="control-select" v-model.number="form[i].visitor_ids[0]">
+                            <option value="">Sélectionner</option>
+                            <option v-for="p in awayOptionsFor(i, 0)" :key="p.id" :value="p.id">
+                                {{ p.first_name }} {{ p.last_name }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="select-group">
+                        <span class="type-badge">{{ requiredType(s.match_identifier, 1) }}</span>
+                        <select class="control-select" v-model.number="form[i].visitor_ids[1]">
+                            <option value="">Sélectionner</option>
+                            <option v-for="p in awayOptionsFor(i, 1)" :key="p.id" :value="p.id">
+                                {{ p.first_name }} {{ p.last_name }}
+                            </option>
+                        </select>
+                    </div>
+                </td>
+
+                <!-- SCORES -->
+                <td>
+                    <select class="control-select" v-model.number="form[i].home_score">
+                        <option value="">-</option>
+                        <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
+                    </select>
+                </td>
+                <td>
+                    <select class="control-select" v-model.number="form[i].visitor_score">
+                        <option value="">-</option>
+                        <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
+                    </select>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3">Total</td>
+                <td>{{ totalHome }}</td>
+                <td>{{ totalAway }}</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
     <button class="btn-primary save" @click="saveSets" :disabled="!isValid">Sauvegarder</button>
 </template>
 
@@ -86,6 +113,13 @@ const jeunesAway = computed(() =>
     )
 )
 
+function requiredType(matchId, pos) {
+    if (matchId === 'D-M-J') return pos === 0 ? 'Homme' : 'Jeune'
+    if (matchId === 'D-M-F') return pos === 0 ? 'Homme' : 'Femme'
+    if (matchId === 'D-F-J') return pos === 0 ? 'Femme' : 'Jeune'
+    return ''
+}
+
 function homeOptionsFor(idx, pos) {
     const id = form.value[idx].match_identifier
     if (id === 'D-M-J') return pos === 0 ? hommesHome.value : jeunesHome.value
@@ -113,6 +147,7 @@ const isValid = computed(() =>
     )
 )
 
+/* Auto-règles de score (3-0 / 0-3) */
 watch(
     () => form.value.map(r => ({ h: r.home_score, v: r.visitor_score })),
     (newVals, oldVals) => {
@@ -137,7 +172,7 @@ watch(
     { deep: true }
 )
 
-// Synchronize the masculine player between D-M-J and D-M-F
+/* Synchronisation du joueur masculin entre D-M-J et D-M-F */
 watch(
     () => form.value[0].home_ids[0],
     val => {
@@ -211,6 +246,69 @@ async function saveSets() {
 </script>
 
 <style scoped>
-/* Styles hérités de MatchEditor.css */
+/* Conteneur responsive : scroll horizontal si nécessaire */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Table */
+.sets-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.sets-table th, .sets-table td {
+    text-align: left;
+}
+.sets-table td {
+    vertical-align: top;
+    padding: 10px 12px;
+}
+
+/* Groupe label + select avec espace confortable */
+.select-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;             /* espace entre badge et select */
+    margin-bottom: 10px;  /* plus d’espace entre les selects */
+}
+
+/* Badge "Homme/Femme/Jeune" */
+.type-badge {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    background: #eef2ff;
+    color: #1f2937;
+    white-space: nowrap;
+    border: 1px solid #e5e7eb;
+}
+
+/* >>> Tous les inputs ont la même largeur, responsive */
+:root {
+    --control-min: 180px;  /* largeur mini confortable */
+    --control-ideal: 22vw; /* s'adapte à l'écran */
+    --control-max: 260px;  /* largeur maxi */
+}
+
+.control-select {
+    width: clamp(var(--control-min), var(--control-ideal), var(--control-max));
+    max-width: 100%;
+    min-width: var(--control-min);
+    display: inline-block;
+}
+
+/* Mobile : badge au-dessus, selects full width */
+@media (max-width: 640px) {
+    .select-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+    .type-badge { margin-bottom: 2px; }
+    .control-select { width: 100%; }
+}
+
+/* Styles hérités de MatchEditor.css (si présents) */
 </style>
 
