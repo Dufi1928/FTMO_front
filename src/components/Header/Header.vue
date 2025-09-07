@@ -113,10 +113,10 @@ const headerClasses = computed(() => {
                     À propos
                 </a>
 
-                <a href="#">
-                    <img src="../../assets/icons/chat-lines.svg" :class="{ 'd-none': theme === 'light' }" />
-                    <img src="../../assets/icons/chat-lines_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
-                    Contact
+                <a href="/runks">
+                    <img src="../../assets/icons/leaderboard.svg" :class="{ 'd-none': theme === 'light' }" />
+                    <img src="../../assets/icons/leaderboard_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    Le classement
                 </a>
                 <a v-if="auth.isAuthenticated" href="/protected/admin/dashboard">Mon compte</a>
                 <a v-else href="/login">Connexion</a>

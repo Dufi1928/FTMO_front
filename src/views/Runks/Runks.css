@@ -1,0 +1,40 @@
+.runks-main{
+    font-family: 'Lato', sans-serif;
+    min-height: 100vh;
+}
+
+.exemple_width{
+    width: 80%;
+    margin: 50px auto 20px;
+    justify-content:center ;
+    display: flex;
+    padding-left: 15px;
+    flex-direction: column;
+    border-left: 10px solid #A6BFF8;
+    box-sizing: border-box;
+}
+
+
+
+.runks_hero {
+    position: relative;
+    background-image: url("../../assets/images/about/about_background.jpg"); /* ← depuis public/ */
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    width: 100%;
+    padding: 150px 0;
+    overflow: hidden;
+}
+
+.runks_hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000000;
+    opacity: 0.03;
+    z-index: 0;
+}

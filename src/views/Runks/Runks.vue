@@ -13,8 +13,24 @@ import { ref, computed, onMounted } from 'vue'
 
 <template>
     <Header theme="light" :key="auth.renderKey" :alwaysBlack="true"/>
-    <main>
+    <main class="runks-main">
+        <div class="runks_hero">
+            <MainPageTitle
+                title="Classement général des clubs"
+                description="Découvrez le classement actualisé de tous les clubs de la FTMO"
+            />
+        </div>
+
+
+
+
+
+
 
     </main>
+
+
+
+
     <Footer/>
 </template>
