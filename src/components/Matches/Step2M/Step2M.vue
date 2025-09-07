@@ -1,50 +1,52 @@
 /* Step2M.vue */
 <template>
-    <table class="sets-table">
-        <thead>
-        <tr><th>Match</th><th>Dom.</th><th>Ext.</th><th>Score D</th><th>Score E</th></tr>
-        </thead>
-        <tbody>
-        <tr v-for="(s, i) in form" :key="s.match_identifier">
-            <td>{{ s.match_identifier }}</td>
-            <td>
-                <select v-model.number="form[i].home_id">
-                    <option value="">Sélectionner</option>
-                    <option v-for="p in filteredHomeOptions(s.match_identifier, s.home_id)" :key="p.id" :value="p.id">
-                        {{ p.first_name }} {{ p.last_name }}
-                    </option>
-                </select>
-            </td>
-            <td>
-                <select v-model.number="form[i].visitor_id">
-                    <option value="">Sélectionner</option>
-                    <option v-for="p in filteredAwayOptions(s.match_identifier, s.visitor_id)" :key="p.id" :value="p.id">
-                        {{ p.first_name }} {{ p.last_name }}
-                    </option>
-                </select>
-            </td>
-            <td>
-                <select v-model.number="form[i].home_score">
-                    <option value="">-</option>
-                    <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
-                </select>
-            </td>
-            <td>
-                <select v-model.number="form[i].visitor_score">
-                    <option value="">-</option>
-                    <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
-                </select>
-            </td>
-        </tr>
-        </tbody>
-        <tfoot>
-        <tr>
-            <td colspan="3">Total</td>
-            <td>{{ totalHome }}</td>
-            <td>{{ totalAway }}</td>
-        </tr>
-        </tfoot>
-    </table>
+    <div class="table-responsive">
+        <table class="sets-table">
+            <thead>
+            <tr><th>Match</th><th>Dom.</th><th>Ext.</th><th>Score D</th><th>Score E</th></tr>
+            </thead>
+            <tbody>
+            <tr v-for="(s, i) in form" :key="s.match_identifier">
+                <td>{{ s.match_identifier }}</td>
+                <td>
+                    <select v-model.number="form[i].home_id">
+                        <option value="">Sélectionner</option>
+                        <option v-for="p in filteredHomeOptions(s.match_identifier, s.home_id)" :key="p.id" :value="p.id">
+                            {{ p.first_name }} {{ p.last_name }}
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <select v-model.number="form[i].visitor_id">
+                        <option value="">Sélectionner</option>
+                        <option v-for="p in filteredAwayOptions(s.match_identifier, s.visitor_id)" :key="p.id" :value="p.id">
+                            {{ p.first_name }} {{ p.last_name }}
+                        </option>
+                    </select>
+                </td>
+                <td>
+                    <select v-model.number="form[i].home_score">
+                        <option value="">-</option>
+                        <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
+                    </select>
+                </td>
+                <td>
+                    <select v-model.number="form[i].visitor_score">
+                        <option value="">-</option>
+                        <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
+                    </select>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3">Total</td>
+                <td>{{ totalHome }}</td>
+                <td>{{ totalAway }}</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
     <button class="btn-primary save" @click="saveSets" :disabled="!isValid">Sauvegarder</button>
 </template>
 
@@ -204,4 +206,23 @@ async function saveSets() {
 
 <style scoped>
 /* Styles hérités de MatchEditor.css */
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.sets-table {
+    min-width: 600px;
+}
+
+@media (max-width: 640px) {
+    .sets-table th,
+    .sets-table td {
+        padding: 0.5rem;
+    }
+    .sets-table select {
+        min-width: 120px;
+    }
+}
 </style>
