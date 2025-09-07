@@ -1,7 +1,7 @@
 <template>
     <table class="sets-table">
         <thead>
-        <tr><th>Match</th><th>Dom.</th><th>Ext.</th><th>Score D</th><th>Score E</th></tr>
+        <tr><th>Catégorie</th><th>Dom.</th><th>Ext.</th><th>Score D</th><th>Score E</th></tr>
         </thead>
         <tbody>
         <tr v-for="(s, i) in form" :key="s.match_identifier">
@@ -9,13 +9,13 @@
             <td>
                 <select v-model.number="form[i].home_ids[0]">
                     <option value="">Sélectionner</option>
-                    <option v-for="p in teamHome" :key="p.id" :value="p.id">
+                    <option v-for="p in homeOptionsFor(i, 0)" :key="p.id" :value="p.id">
                         {{ p.first_name }} {{ p.last_name }}
                     </option>
                 </select>
                 <select v-model.number="form[i].home_ids[1]">
                     <option value="">Sélectionner</option>
-                    <option v-for="p in teamHome" :key="p.id" :value="p.id">
+                    <option v-for="p in homeOptionsFor(i, 1)" :key="p.id" :value="p.id">
                         {{ p.first_name }} {{ p.last_name }}
                     </option>
                 </select>
@@ -23,13 +23,13 @@
             <td>
                 <select v-model.number="form[i].visitor_ids[0]">
                     <option value="">Sélectionner</option>
-                    <option v-for="p in teamAway" :key="p.id" :value="p.id">
+                    <option v-for="p in awayOptionsFor(i, 0)" :key="p.id" :value="p.id">
                         {{ p.first_name }} {{ p.last_name }}
                     </option>
                 </select>
                 <select v-model.number="form[i].visitor_ids[1]">
                     <option value="">Sélectionner</option>
-                    <option v-for="p in teamAway" :key="p.id" :value="p.id">
+                    <option v-for="p in awayOptionsFor(i, 1)" :key="p.id" :value="p.id">
                         {{ p.first_name }} {{ p.last_name }}
                     </option>
                 </select>
@@ -66,13 +66,40 @@ const props = defineProps({ team1: Array, team2: Array, matchId: Number })
 const emit = defineEmits(['next-step', 'error'])
 
 const form = ref([
-    { match_identifier: 'D1', home_ids: [null, null], visitor_ids: [null, null], home_score: '', visitor_score: '' },
-    { match_identifier: 'D2', home_ids: [null, null], visitor_ids: [null, null], home_score: '', visitor_score: '' },
-    { match_identifier: 'D3', home_ids: [null, null], visitor_ids: [null, null], home_score: '', visitor_score: '' }
+    { match_identifier: 'D-M-J', home_ids: [null, null], visitor_ids: [null, null], home_score: '', visitor_score: '' },
+    { match_identifier: 'D-M-F', home_ids: [null, null], visitor_ids: [null, null], home_score: '', visitor_score: '' },
+    { match_identifier: 'D-F-J', home_ids: [null, null], visitor_ids: [null, null], home_score: '', visitor_score: '' }
 ])
 
-const teamHome = computed(() => props.team1)
-const teamAway = computed(() => props.team2)
+const hommesHome = computed(() => props.team1.filter(p => p.civility === 'Mr'))
+const hommesAway = computed(() => props.team2.filter(p => p.civility === 'Mr'))
+const femmesHome = computed(() => props.team1.filter(p => p.civility === 'Mme'))
+const femmesAway = computed(() => props.team2.filter(p => p.civility === 'Mme'))
+const jeunesHome = computed(() =>
+    props.team1.filter(
+        p => new Date(p.birth_date) > new Date(new Date().getFullYear() - 15, 7, 31)
+    )
+)
+const jeunesAway = computed(() =>
+    props.team2.filter(
+        p => new Date(p.birth_date) > new Date(new Date().getFullYear() - 15, 7, 31)
+    )
+)
+
+function homeOptionsFor(idx, pos) {
+    const id = form.value[idx].match_identifier
+    if (id === 'D-M-J') return pos === 0 ? hommesHome.value : jeunesHome.value
+    if (id === 'D-M-F') return pos === 0 ? hommesHome.value : femmesHome.value
+    if (id === 'D-F-J') return pos === 0 ? femmesHome.value : jeunesHome.value
+    return []
+}
+function awayOptionsFor(idx, pos) {
+    const id = form.value[idx].match_identifier
+    if (id === 'D-M-J') return pos === 0 ? hommesAway.value : jeunesAway.value
+    if (id === 'D-M-F') return pos === 0 ? hommesAway.value : femmesAway.value
+    if (id === 'D-F-J') return pos === 0 ? femmesAway.value : jeunesAway.value
+    return []
+}
 
 const totalHome = computed(() => form.value.reduce((sum, s) => sum + (parseInt(s.home_score) || 0), 0))
 const totalAway = computed(() => form.value.reduce((sum, s) => sum + (parseInt(s.visitor_score) || 0), 0))
@@ -108,6 +135,32 @@ watch(
         })
     },
     { deep: true }
+)
+
+// Synchronize the masculine player between D-M-J and D-M-F
+watch(
+    () => form.value[0].home_ids[0],
+    val => {
+        if (form.value[1].home_ids[0] !== val) form.value[1].home_ids[0] = val
+    }
+)
+watch(
+    () => form.value[1].home_ids[0],
+    val => {
+        if (form.value[0].home_ids[0] !== val) form.value[0].home_ids[0] = val
+    }
+)
+watch(
+    () => form.value[0].visitor_ids[0],
+    val => {
+        if (form.value[1].visitor_ids[0] !== val) form.value[1].visitor_ids[0] = val
+    }
+)
+watch(
+    () => form.value[1].visitor_ids[0],
+    val => {
+        if (form.value[0].visitor_ids[0] !== val) form.value[0].visitor_ids[0] = val
+    }
 )
 
 async function fetchExistingSets() {
