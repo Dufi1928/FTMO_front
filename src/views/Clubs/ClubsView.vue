@@ -1,7 +1,7 @@
 <script setup>
 import Header from '../../components/Header/Header.vue'
 import Footer from '../../components/Footer/Footer.vue'
-import './clubs.css'
+import './Clubs.css'
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../../../stores/auth.js'
 const auth = useAuthStore()
