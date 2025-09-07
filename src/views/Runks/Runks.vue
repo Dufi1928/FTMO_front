@@ -5,6 +5,7 @@ import './Runks.css'
 import { useAuthStore } from '../../../stores/auth.js'
 const auth = useAuthStore()
 import MainPageTitle from "../../components/MainPageTitle/MainPageTitle.vue"
+import SecundaryPageTitle from "../../components/SecundaryPageTitle/SecundaryPageTitle.vue"
 import GenericRankingTable from "../../components/GenericRankingTable/GenericRankingTable.vue"
 
 import { ref, onMounted } from 'vue'
@@ -74,12 +75,14 @@ onMounted(() => {
 
 <template>
     <Header theme="light" :key="auth.renderKey" :alwaysBlack="true" />
-    <main class="runks-main">
-        <div class="runks_hero">
-            <MainPageTitle
-                title="Classement général des clubs"
-                description="Découvrez le classement actualisé de tous les clubs de la FTMO"
-            />
+    <main class="runks-page-container">
+        <MainPageTitle
+            title="Classement général des clubs"
+            description="Découvrez le classement actualisé de tous les clubs de la FTMO"
+        />
+
+        <div class="h2-page-container">
+            <SecundaryPageTitle title="Classement" />
         </div>
 
         <ul class="runks-tags">
@@ -89,12 +92,11 @@ onMounted(() => {
                 </button>
             </li>
         </ul>
-
-        <div v-if="activeTag === 'EQUIPES'">
+        <div v-if="activeTag === 'EQUIPES'" class="ranking-container">
             <GenericRankingTable
                 :columns="columns"
                 :rows="ranking"
-                width="80%"
+                width="100%"
                 row_height="50"
             />
         </div>
