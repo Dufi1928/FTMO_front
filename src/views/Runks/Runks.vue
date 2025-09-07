@@ -25,7 +25,7 @@ const tags = [
 
 const activeTag = ref('EQUIPES')
 
-const columns = [
+const teamColumns = [
     {field: 'club', label: 'Club', pinned: true},
     {
         field: 'rank',
@@ -39,15 +39,31 @@ const columns = [
     {field: 'diff', label: 'Différence', sortable: true}
 ]
 
+const playerColumns = [
+    {field: 'player', label: 'Joueur', pinned: true},
+    {
+        field: 'rank',
+        label: 'Classement',
+        sortable: true,
+        html: (row) =>
+            `<span class="rank-badge ${row.rank === 1 ? 'gold' : row.rank === 2 ? 'silver' : row.rank === 3 ? 'bronze' : ''}">${row.rank}</span>`
+    },
+    {field: 'won', label: 'Points marqués', sortable: true, cellClass: 'won', color: '#12B221'},
+    {field: 'lost', label: 'Points concédés', sortable: true, cellClass: 'lost', color: '#D11B1B'},
+    {field: 'diff', label: 'Différence', sortable: true}
+]
+
+const columns = computed(() => activeTag.value === 'EQUIPES' ? teamColumns : playerColumns)
+
 const ranking = ref([])
 
-function decorateAndSet(rows) {
-    // rows: [{club, won, lost, diff?}]
+function decorateAndSet(rows, nameField) {
+    // rows: [{[nameField], won, lost, diff?}]
     const mapped = rows.map(r => {
         const won = Number(r.won) || 0
         const lost = Number(r.lost) || 0
         return {
-            club: r.club,
+            [nameField]: r[nameField],
             won,
             lost,
             diff: ('diff' in r) ? Number(r.diff) : (won - lost)
@@ -71,7 +87,7 @@ function buildRankingFromTeams(teams) {
             diff
         }
     })
-    decorateAndSet(rows)
+    decorateAndSet(rows, 'club')
 }
 
 async function fetchTeamsRanking() {
@@ -85,13 +101,29 @@ async function fetchTeamsRanking() {
     }
 }
 
+function buildRankingFromPlayers(players) {
+    const rows = players.map(p => {
+        const won = Number(p.points_scored) || 0
+        const lost = Number(p.points_conceded) || 0
+        const diff = won - lost
+        return {
+            player: `${p.first_name} ${p.last_name}`,
+            won,
+            lost,
+            diff
+        }
+    })
+    decorateAndSet(rows, 'player')
+}
+
 async function fetchCategoryRanking(tag) {
     try {
-        const url = `${API_BASE}/teams/rankings/?category=${encodeURIComponent(tag)}`
+        const slug = tag.toLowerCase().replace(/\s+/g, '-')
+        const url = `${API_BASE}/stats/${encodeURIComponent(slug)}/`
         const res = await fetch(url)
         const data = await res.json()
-        // data: [{ club, won, lost, diff }]
-        decorateAndSet(data)
+        // data.results: [{ first_name, last_name, points_scored, points_conceded }]
+        buildRankingFromPlayers(data.results || [])
     } catch (err) {
         console.error(`Erreur chargement classement pour ${tag}`, err)
         ranking.value = []
