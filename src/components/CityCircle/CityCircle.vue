@@ -10,6 +10,10 @@ const props = defineProps({
     name: {
         type: String,
         required: true
+    },
+    slug: {
+        type: String,
+        required: true
     }
 })
 </script>
@@ -17,9 +21,9 @@ const props = defineProps({
 <template>
     <div class="city-circle">
         <img :src="image" alt="Ville" class="city-image"/>
-        <div class="city-info">
+        <a :href="`/clubs/${slug}`" class="city-info">
             <p class="city-name">{{ name }}</p>
             <img src="../../assets/icons/icon.svg" alt="→">
-        </div>
+        </a>
     </div>
 </template>

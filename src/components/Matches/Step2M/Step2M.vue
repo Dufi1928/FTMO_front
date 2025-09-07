@@ -45,7 +45,7 @@
         </tr>
         </tfoot>
     </table>
-    <button class="btn-primary" @click="saveSets" :disabled="!isValid">Sauvegarder M</button>
+    <button class="btn-primary save" @click="saveSets" :disabled="!isValid">Sauvegarder</button>
 </template>
 
 <script setup>

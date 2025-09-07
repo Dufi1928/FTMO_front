@@ -12,6 +12,7 @@ import GenericRankingTable from "../../components/GenericRankingTable/GenericRan
 import {Splide, SplideSlide} from "@splidejs/vue-splide";
 import SectionHeader from "../../components/SectionHeader/SectionHeader.vue";
 import MatchCard from "../../components/MatchCard/MatchCard.vue";
+import { computed } from 'vue'
 
 const pageContext = usePageContext()
 const clubId = pageContext.routeParams?.id ?? 'inconnu'
@@ -189,7 +190,7 @@ onMounted(() => {
                 background=""
                 title="Les prochaines rencontres"
                 linkText="Toutes les rencontres"
-                linkUrl="/clubs"
+                linkUrl="/schedule"
             />
 
             <div class="city-slider-container" >

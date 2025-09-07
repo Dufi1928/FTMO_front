@@ -24,6 +24,9 @@
         opacity: 0.5;
         cursor: not-allowed;
     }
+    .save{
+        width: 100%;
+    }
     .close{
         min-width: 100px;
         display: flex;

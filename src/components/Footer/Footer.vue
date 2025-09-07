@@ -15,10 +15,10 @@ import './Footer.css'
                 </a>
 
                 <ul class="footer-nav">
-                    <li><a href="#"><img src="../../assets/icons/home_icon.svg" />Accueil</a></li>
-                    <li><a href="#"><img src="../../assets/icons/calendar-lines.svg" />Calendrier</a></li>
-                    <li><a href="#"><img src="../../assets/icons/question-mark-circle.svg" />À&nbsp;propos</a></li>
-                    <li><a href="#"><img src="../../assets/icons/chat-lines.svg" />Contact</a></li>
+                    <li><a href="/"><img src="../../assets/icons/home_icon.svg" />Accueil</a></li>
+                    <li><a href="/schedule"><img src="../../assets/icons/calendar-lines.svg" />Calendrier</a></li>
+                    <li><a href="/about"><img src="../../assets/icons/question-mark-circle.svg" />À&nbsp;propos</a></li>
+                    <li><a href="/contact"><img src="../../assets/icons/chat-lines.svg" />Contact</a></li>
                 </ul>
             </div>
         </div>

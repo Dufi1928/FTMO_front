@@ -12,10 +12,15 @@
 }
 
 .city-info {
+    text-decoration: none;
+    color: #3138AA;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 10px;
+}
+.city-info:hover{
+    cursor: pointer;
 }
 
 .city-name {

@@ -32,6 +32,22 @@
 
 }
 
+.club-card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 6px 0 10px;
+}
+.badge {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #fff7cc;       /* jaune pâle */
+    border: 1px solid #ffe08a; /* contour doux */
+    font-size: 12px;
+    line-height: 1;
+}
+
+
 .club-card-info p {
     color: #404040;
     display: flex;

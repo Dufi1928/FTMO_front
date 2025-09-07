@@ -167,5 +167,115 @@
     font-size: 0.95rem;
     color: #6D6E71;
 }
+.values-section{
+    width: 80%;
+    margin: 5px auto;
+}
+.mini-title{
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #3138AA;
+    font-family: Lato, sans-serif ;
+    margin-bottom: 5px;
+}
+.value-label{
+    font-weight: 400;
+    font-family: Lato, sans-serif;
+    font-size: 0.95rem;
+    color: #6D6E71;
+}
+.about-values-wrapper{
+    margin: auto;
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+}
+.value-card{
+    height: 300px;
+    width: 250px;
+    display: flex;
+    margin: 100px auto;
+    border-radius: 8px;
+    text-align: center;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 30px;
+    border: solid 2px #F0F0F0;
+    .icon-circle{
+        margin:0 auto;
+    }
+}
+
+
+
+.city-slider-container{
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-bottom: 100px;
+    overflow: hidden;
+    align-items: center;
+    background-color: #F9F9F9;
+}
+.city-slider-container .splide__track{
+    overflow: visible !important; /* force l’overflow */
+}
+.cities-wrapper {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 1rem;
+    padding: 1rem;
+    scrollbar-width: none; /* Firefox */
+}
+.cities-wrapper > * {
+    flex: 0 0 calc(25% - 0.75rem); /* 4 éléments par ligne avec l'écart */
+}
+
+.cities-wrapper::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.splide__arrow {
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    font-size: 1rem;
+    color: white;
+    z-index: 10;
+    opacity: 100;
+}
+.splide__arrow--next , .splide__arrow--prev{
+    background: black  !important;
+    opacity: 100 !important;
+    svg{
+        fill: white !important;
+    }
+}
+.splide__arrow--next:hover, .splide__arrow--prev:hover {
+    background: #696969 !important;
+    svg{
+        fill: white !important;
+    }
+}
+
+
+.splide__arrow:disabled{
+    display: none;
+}
+
+.splide__arrow--prev {
+    left: -1.5rem;
+}
+
+.splide__arrow--next {
+    right: -1.5rem;
+}
+.splide__arrow:hover {
+    color: #000;
+    cursor: pointer;
+}
+
+
 
 

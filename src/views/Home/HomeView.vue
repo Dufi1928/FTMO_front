@@ -1,7 +1,7 @@
 <script setup>
-import {ref, onMounted} from 'vue'
+import {ref, computed, onMounted} from 'vue'
 import Header from '../../components/Header/Header.vue'
-import { useAuthStore } from '../../../stores/auth.js'
+import {useAuthStore} from '../../../stores/auth.js'
 import SectionHeader from '../../components/SectionHeader/SectionHeader.vue'
 import CityCircle from '../../components/CityCircle/CityCircle.vue'
 import './home.css'
@@ -9,33 +9,107 @@ import '@splidejs/vue-splide/css'
 import {Splide, SplideSlide} from '@splidejs/vue-splide'
 import MatchCard from "../../components/MatchCard/MatchCard.vue";
 import Footer from "../../components/Footer/Footer.vue";
-import MapProClubs from "../../components/Map/MapProClubs.vue"
-
+import MapClubsByPosition from "../../components/MapClubsByPosition/MapClubsByPosition.vue";
 
 
 const auth = useAuthStore()
 const cities = ref([])
+const loading = ref(true)
+const errorMsg = ref('')
+const matches = ref([])
+const ranking = ref([])
+
+async function fetchAllMatches() {
+    loading.value = true
+    errorMsg.value = ''
+    try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
+        const headers = {
+            ...(token ? {Authorization: `Bearer ${token}`} : {}),
+            'Content-Type': 'application/json',
+        }
+
+        let res = await fetch('https://ftmo.bob-digital.com/api/matches', {headers})
+        if (!res.ok) res = await fetch('https://ftmo.bob-digital.com/api/matches/', {headers})
+        if (!res.ok) throw new Error('Impossible de charger les matchs.')
+
+        const data = await res.json()
+        matches.value = Array.isArray(data) ? data : []
+    } catch (e) {
+        errorMsg.value = e?.message || 'Erreur inconnue.'
+    } finally {
+        loading.value = false
+    }
+}
+function buildRankingFromTeams(teams) {
+    const rows = teams.map((t) => {
+        const wonSets  = Number(t.total_points_scored)   || 0      // sets gagnés
+        const lostSets = Number(t.total_points_conceded) || 0      // sets perdus
+        const diff     = wonSets - lostSets
+
+        // Hypothèse de calcul des "Points" de classement :
+        // 2 pts par match gagné + 1 par match nul (ajuste si ta règle est différente)
+        const points = (Number(t.matches_won) || 0) * 2 + (Number(t.matches_drawn) || 0)
+
+        // Numéro d’équipe : adapte selon ta donnée (ici on met 1 par défaut)
+        const teamNo = t.team_admin ?? 1
+
+        return {
+            club: t.club_name,
+            teamNo,
+            points,
+            won: wonSets,
+            lost: lostSets,
+            diff
+        }
+    })
+    // tri du plus grand nombre de sets gagnés au plus petit
+    rows.sort((a, b) => b.won - a.won)
+    // attribution des rangs
+    rows.forEach((r, i) => (r.rank = i + 1))
+    ranking.value = rows
+}
+
+
 
 onMounted(async () => {
     try {
         const res = await fetch('https://ftmo.bob-digital.com/api/teams/')
         const data = await res.json()
+        // alimente le slider des clubs
         cities.value = data.map(team => ({
             name: team.club_name,
-            image: team.image || 'src/assets/images/deulemont.jpeg'
+            image: team.image || 'src/assets/images/deulemont1.jpeg',
+            slug: team.id,
         }))
+
+        // construit le ranking à partir de l’API
+        buildRankingFromTeams(data)
     } catch (err) {
         console.error('Erreur de chargement des clubs:', err)
     }
-})
-const ranking = ref([
-    {rank: 1, club: 'Deulemont', teamNo: 1, points: 2, won: 74, lost: 15, diff: 59},
-    {rank: 2, club: 'Lompret', teamNo: 1, points: 2, won: 64, lost: 23, diff: 41},
-    {rank: 3, club: 'Capinghem', teamNo: 1, points: 2, won: 63, lost: 34, diff: 29},
-    {rank: 4, club: 'Wez‐Macquart', teamNo: 1, points: 2, won: 54, lost: 39, diff: 15},
-    {rank: 5, club: 'Deulemont', teamNo: 2, points: 2, won: 39, lost: 54, diff: -15}
-])
 
+    fetchAllMatches()
+})
+
+
+const fmtDateHeader = (iso) =>
+    new Date(iso).toLocaleDateString('fr-FR', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    })
+const fmtTime = (iso) =>
+    new Date(iso).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})
+const sortedMatches = computed(() =>
+    [...matches.value].sort(
+        (a, b) => new Date(a.scheduled_datetime) - new Date(b.scheduled_datetime)
+    )
+)
+// Prochaines rencontres uniquement
+const upcomingMatches = computed(() => {
+    const now = Date.now()
+    return sortedMatches.value.filter(m => new Date(m.scheduled_datetime).getTime() >= now)
+    // .slice(0, 10) // ← décommente si tu veux limiter le slider à 10 items
+})
 
 </script>
 
@@ -81,7 +155,7 @@ const ranking = ref([
             <Splide
                 :options="{ perPage: 4, arrows: true, gap: '1rem', pagination: false, focus: 'left',trimSpace: true, perMove: 1, breakpoints: { 1024: { perPage: 2 }, 640: { perPage: 1 } } }">
                 <SplideSlide v-for="(city, i) in cities" :key="i">
-                    <CityCircle :image="city.image" :name="city.name"/>
+                    <CityCircle :image="city.image" :name="city.name" :slug="city.slug"/>
                 </SplideSlide>
             </Splide>
         </div>
@@ -90,16 +164,33 @@ const ranking = ref([
         background=""
         title="Les prochaines rencontres"
         linkText="Toutes les rencontres"
-        linkUrl="/clubs"
+        linkUrl="/schedule"
     />
 
     <div class="city-slider-container" style="background: white">
         <Splide
-            :options="{ perPage: 3, arrows: true, gap: '1rem', pagination: false, focus: 'left',trimSpace: true, perMove: 1, breakpoints: { 1124: { perPage: 2 }, 640: { perPage: 1 } } }">
-            <SplideSlide v-for="(city, i) in cities" :key="i">
-                <MatchCard details-url="https://google.fr" venue="Salle Victor Hugo, Lille" match-time="14h30"
-                           match-date="23 Avril 2025" away-logo="src/assets/images/deulemont.jpeg" away-name="Deulemont"
-                           home-logo="src/assets/images/deulemont.jpeg" home-name="Verlinghem"/>
+            :options="{
+             perPage: 3,
+             arrows: true,
+             gap: '1rem',
+             pagination: false,
+             focus: 'left',
+             trimSpace: true,
+             perMove: 1,
+             breakpoints: { 1124: { perPage: 2 }, 640: { perPage: 1 } }
+           }"
+        >
+            <SplideSlide v-for="match in upcomingMatches" :key="match.id">
+                <MatchCard
+                    :home-name="match.home_team_name"
+                    :away-name="match.away_team_name"
+                    :home-logo="match.home_team_logo ? `https://ftmo.bob-digital.com/media/${match.home_team_logo}` : ''"
+                    :away-logo="match.away_team_logo ? `https://ftmo.bob-digital.com/media/${match.away_team_logo}` : ''"
+                    :match-date="fmtDateHeader(match.scheduled_datetime)"
+                    :match-time="fmtTime(match.scheduled_datetime)"
+                    :venue="match.home_team_name"
+                    :show-btn="false"
+                />
             </SplideSlide>
         </Splide>
     </div>
@@ -117,7 +208,9 @@ const ranking = ref([
             <div class="rank-pinned">
                 <table class="ranking-table ranking-left">
                     <thead>
-                    <tr><th>Club</th></tr>
+                    <tr>
+                        <th>Club</th>
+                    </tr>
                     </thead>
                     <tbody>
                     <tr v-for="row in ranking" :key="row.rank">
@@ -132,7 +225,6 @@ const ranking = ref([
                     <thead>
                     <tr>
                         <th>Classement</th>
-                        <th>Points</th>
                         <th>Sets gagnés</th>
                         <th>Sets perdus</th>
                         <th>Différence</th>
@@ -147,11 +239,10 @@ const ranking = ref([
               {{ row.rank }}
             </span>
                         </td>
-                        <td>{{ row.points }}</td>
                         <td class="won">{{ row.won }}</td>
                         <td class="lost">{{ row.lost }}</td>
                         <td :class="{ positive:row.diff>0, negative:row.diff<0 }">
-                            {{ row.diff>0? '+'+row.diff : row.diff }}
+                            {{ row.diff > 0 ? '+' + row.diff : row.diff }}
                         </td>
                     </tr>
                     </tbody>
@@ -163,7 +254,7 @@ const ranking = ref([
 
     <template>
         <div class="map-container-home h-screen">
-            <MapProClubs api-key="hwPULScg2AcyGIZf8gl0"/>
+            <MapClubsByPosition :show-filters="false" />
         </div>
     </template>
     <Footer/>

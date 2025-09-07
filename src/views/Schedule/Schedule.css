@@ -1,0 +1,105 @@
+/* Container */
+.schedule-wrapper { display: grid; gap: 1.25rem; }
+
+.title { margin: 0; font-size: 1.5rem; font-weight: 700; }
+.subtitle { margin: .25rem 0 0 0; color: #6b7280; font-size: .95rem; }
+.actions { display: flex; gap: .75rem; align-items: center; }
+.schedule-page-title-wrapper {
+    position: relative;
+    background-image: url("../../assets/images/about/about_background.jpg"); /* ← depuis public/ */
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    width: 100%;
+    padding: 150px 0;
+    overflow: hidden;
+}
+.schedule-wrapper{
+    width: 80%;
+    margin: auto;
+}
+
+.schedule-page-title-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000000;
+    opacity: 0.03;
+    z-index: 0;
+}
+
+.schedule-page-title-wrapper > * {
+    position: relative;
+    z-index: 1;
+}
+.cards-grid {
+    margin-top: 40px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    max-width: 1200px; /* optionnel pour limiter à 3 */
+    gap: 50px;
+    margin-bottom: 50px;
+}
+
+.map-container-home{
+    width:100%;
+    height:500px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow: hidden;
+}
+
+.filters-bar {
+    display: grid;
+    width: 100%;
+    margin: 50px 0 24px;
+    gap: 12px;
+    align-items: center;
+    grid-template-columns: auto 1fr auto; /* Label auto, select prend tout, bouton auto */
+}
+
+/* Quand il n’y a pas de bouton reset, le select prend encore tout l’espace */
+.filters-bar:has(select:only-child) {
+    grid-template-columns: auto 1fr;
+}
+
+/* Label (titre) */
+.filters-bar label {
+    font-family: "Roboto", sans-serif;
+    font-weight: 600;
+    font-size: 2rem;
+    white-space: nowrap; /* pour éviter qu’il coupe le texte */
+}
+
+/* Select prend tout l’espace dispo */
+.filters-bar select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+}
+
+/* Bouton reset */
+.btn-reset {
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+}
+.btn-reset:hover {
+    background: #f9fafb;
+}
+
+/* Responsive → pile verticale */
+@media (max-width: 768px) {
+    .filters-bar {
+        grid-template-columns: 1fr;
+    }
+}
