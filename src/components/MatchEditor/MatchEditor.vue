@@ -3,7 +3,7 @@
 import { ref, onMounted } from 'vue'
 import Step1MJ from '../Matches/Step1MJ/Step1MJ.vue'
 import Step2M from '../Matches/Step2M/Step2M.vue'
-// import Step3 from './Step3.vue'
+import Step3D from '../Matches/Step3D/Step3D.vue'
 import './MatchEditor.css'
 const props = defineProps({ match: Object, visible: Boolean, isHomeTeam: Boolean })
 const emit = defineEmits(['close'])
@@ -77,9 +77,13 @@ function prevStep() { if (step.value > 1) step.value-- }
                 @next-step="nextStep"
             />
 
-<!--            <Step3-->
-<!--                v-else-if="step === 3"-->
-<!--            />-->
+            <Step3D
+                v-else-if="step === 3"
+                :team1="team1"
+                :team2="team2"
+                :matchId="match.id"
+                @next-step="nextStep"
+            />
 
             <div class="btn-row">
                 <button class="btn-secondary" @click="prevStep" v-if="step > 1">⬅ Retour</button>
