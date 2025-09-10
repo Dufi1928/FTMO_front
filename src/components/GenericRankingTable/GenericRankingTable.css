@@ -57,24 +57,6 @@
     background:#081828;
     color: white;
 }
-.row-height-72 {
-    line-height: 72px;
-}
-.row-height-50{
-    height: 90px;
-}
-.row-height-80 {
-    line-height: 80px;
-}
-.row-height-90 {
-    line-height: 90px !important;
-}
-.row-height-100 {
-    line-height: 100px;
-}
-.row-height-120 {
-    line-height: 120px;
-}
 /* ========== TABLE COMMUNE (desktop) ========== */
 .ranking-table {
     width: 100%;
@@ -194,6 +176,7 @@
 }
 .ranking-table-row{
     height: var(--row-h);
+    line-height: var(--row-h);
 }
 
 .ranking-search {
