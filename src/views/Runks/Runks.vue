@@ -43,7 +43,25 @@ const teamColumns = [
 ]
 
 const playerColumns = [
-    { field: 'player', label: 'Joueur', pinned: true },
+    {
+        field: 'player',
+        label: 'Joueur',
+        pinned: true,
+        html: (row) => {
+            const imgHtml = row.avatar
+                ? `<img src="${row.avatar}" alt="${row.player}" class="player-avatar"/>`
+                : (() => {
+                    const initials = row.player
+                        .split(' ')
+                        .map(n => n[0] || '')
+                        .join('')
+                        .slice(0,2)
+                        .toUpperCase()
+                    return `<div class="avatar-initials"><span>${initials}</span></div>`
+                })()
+            return `<div class="cell-with-avatar">${imgHtml}<span>${row.player}</span></div>`
+        }
+    },
     { field: 'team_name', label: 'Equipe', sortable: true },
     {
         field: 'rank',
@@ -92,13 +110,15 @@ function decorateAndSet(rows, nameField) {
     const mapped = rows.map(r => {
         const won = Number(r.won) || 0
         const lost = Number(r.lost) || 0
-        return {
+        const base = {
             [nameField]: r[nameField],
             team_name: r.team_name || '',
             won,
             lost,
             diff: ('diff' in r) ? Number(r.diff) : (won - lost)
         }
+        if (r.avatar) base.avatar = r.avatar
+        return base
     })
     mapped.sort((a, b) => (b.won - a.won) || (b.diff - a.diff))
     mapped.forEach((r, i) => (r.rank = i + 1))
@@ -137,6 +157,7 @@ function buildRankingFromPlayers(players) {
         const label = p.names ? p.names : `${p.first_name} ${p.last_name}`
         return {
             player: label,
+            avatar: p.profile_image || p.avatar || '',
             team_name: p.team_name || '',
             won,
             lost,
