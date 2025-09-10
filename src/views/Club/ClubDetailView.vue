@@ -121,7 +121,26 @@ onMounted(async () => {
 
 // Colonnes du tableau joueurs
 const playerColumns = [
-    { field: 'name', label: 'Joueur', pinned: true, sortable: false },
+    {
+        field: 'name',
+        label: 'Joueur',
+        pinned: true,
+        sortable: false,
+        html: (row) => {
+            const imgHtml = row.avatar
+                ? `<img src="${row.avatar}" alt="${row.name}" class="player-avatar"/>`
+                : (() => {
+                    const initials = row.name
+                        .split(' ')
+                        .map(n => n[0] || '')
+                        .join('')
+                        .slice(0,2)
+                        .toUpperCase()
+                    return `<div class="avatar-initials"><span>${initials}</span></div>`
+                })()
+            return `<div class="cell-with-avatar">${imgHtml}<span>${row.name}</span></div>`
+        }
+    },
     // { field: 'position', label: 'Classement', pinned: false, sortable: true },
     { field: 'matches', label: 'Matchs joués', pinned: false, sortable: true },
     {
@@ -167,6 +186,7 @@ onMounted(async () => {
             const rate = typeof p.win_rate === 'number' ? p.win_rate : 0
             return {
                 name: [p.first_name, p.last_name].filter(Boolean).join(' '),
+                avatar: p.profile_image || p.avatar || '',
                 'matches Win': p.matches_won ?? 0,
                 'matches lost': p.matches_lost ?? 0,
                 matches: p.matches_played ?? 0,
