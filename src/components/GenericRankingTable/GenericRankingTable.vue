@@ -26,14 +26,14 @@
             <div class="rank-pinned">
                 <table class="ranking-table ranking-left">
                     <thead>
-                    <tr class="ranking-table-row row-height-50" >
+                    <tr class="ranking-table-row" :style="rowHeightStyle">
                         <th v-for="col in pinnedColumns" :key="col.field">
                             {{ col.label }}
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(row, rowIndex) in sortedRows" :key="rowIndex" :class="rowHeightClass">
+                    <tr v-for="(row, rowIndex) in sortedRows" :key="rowIndex" class="ranking-table-row" :style="rowHeightStyle">
                         <td
                             v-for="col in pinnedColumns"
                             :key="col.field"
@@ -57,7 +57,7 @@
             <div class="rank-scroll">
                 <table class="ranking-table ranking-main">
                     <thead>
-                    <tr class="ranking-table-row row-height-50"  >
+                    <tr class="ranking-table-row"  :style="rowHeightStyle">
                         <th
                             v-for="col in scrollableColumns"
                             :key="col.field"
@@ -72,7 +72,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(row, rowIndex) in sortedRows" :key="rowIndex" :class="rowHeightClass">
+                    <tr v-for="(row, rowIndex) in sortedRows" :key="rowIndex" class="ranking-table-row" :style="rowHeightStyle">
                         <td
                             v-for="col in scrollableColumns"
                             :key="col.field"
@@ -143,7 +143,7 @@ const props = defineProps({
         default: '80%'  // largeur par défaut
     }
 })
-const rowHeightClass = computed(() => `row-height-${props.row_height.replace('px', '')}`)
+const rowHeightStyle = computed(() => ({ '--row-h': `${parseInt(props.row_height)}px` }))
 
 // --- TRI ---
 const sortKey = ref(null)
