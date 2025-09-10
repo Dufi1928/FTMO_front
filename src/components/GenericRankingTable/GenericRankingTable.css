@@ -50,8 +50,8 @@
 
 .ranking-table th,
 .ranking-table td {
-    height: 100%;
-    line-height: calc(var(--row-h) - 2 * 0.7rem);
+    height: auto;
+    line-height: 1.4;
 }
 .table-header {
     background:#081828;
@@ -188,8 +188,9 @@
 }
 
 .ranking-table td {
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    white-space: normal;
+    text-overflow: unset;
+    overflow-wrap: anywhere;
 }
 .ranking-table-row{
     height: var(--row-h);
@@ -236,4 +237,14 @@
 .avatar-initials {
     background: #bbb;
     color: #fff;
+}
+
+/* ------ affichage des doubles ------ */
+.double-pair {
+    display: flex;
+    flex-direction: column;
+}
+.double-pair .pair-team {
+    font-size: 0.85em;
+    color: #4b5563;
 }
