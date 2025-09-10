@@ -184,9 +184,12 @@ onMounted(async () => {
     if (club.value?.players?.length) {
         const rows = club.value.players.map(p => {
             const rate = typeof p.win_rate === 'number' ? p.win_rate : 0
+            const imgUrl = p.profile_image
+                ? `https://ftmo.bob-digital.com${p.profile_image}`
+                : (p.avatar || '')
             return {
                 name: [p.first_name, p.last_name].filter(Boolean).join(' '),
-                avatar: p.profile_image || p.avatar || '',
+                avatar: imgUrl,
                 'matches Win': p.matches_won ?? 0,
                 'matches lost': p.matches_lost ?? 0,
                 matches: p.matches_played ?? 0,
