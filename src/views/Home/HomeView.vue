@@ -138,7 +138,7 @@ const upcomingMatches = computed(() => {
                 Notre mission est de promouvoir les valeurs sportives, l'esprit d'équipe et la pratique du tennis de
                 table pour tous, quel que soit l'âge ou le niveau.
             </p>
-            <a href="" class="our-history-content-content-cta">En savoir plus</a>
+<!--            <a href="" class="our-history-content-content-cta">En savoir plus</a>-->
         </div>
     </div>
     <div class="images-grid-container">

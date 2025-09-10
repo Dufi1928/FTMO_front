@@ -189,10 +189,27 @@
 
 .ranking-table td {
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
 }
 .ranking-table-row{
     height: var(--row-h);
 }
 
+.ranking-search {
+    width: 75%;
+    margin: auto;
+    margin-bottom: 50px;
+}
+
+.ranking-search input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    outline: none;
+}
+
+.ranking-search input:focus {
+    border-color: #94a3b8; /* gris neutre en focus */
+}

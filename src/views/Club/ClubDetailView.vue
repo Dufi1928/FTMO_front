@@ -19,10 +19,50 @@ const clubId = pageContext.routeParams?.id ?? 'inconnu'
 const auth = useAuthStore()
 const cities = ref([])
 const club = ref(null)
+const matches = ref([])
+const loading = ref(true)
+const errorMsg = ref('')
 
 /* --------- Helpers horaires --------- */
 function pad2(n) {
     return String(n).padStart(2, '0')
+}
+function fmtDateHeader(iso) {
+    if (!iso) return ''
+    return new Date(iso).toLocaleDateString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    })
+}
+
+const upcomingMatches = computed(() => {
+    const now = Date.now()
+    return matches.value.filter(
+        m => new Date(m.scheduled_datetime).getTime() >= now
+    )
+})
+async function fetchAllMatches() {
+    loading.value = true
+    errorMsg.value = ''
+    try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
+        const headers = {
+            ...(token ? {Authorization: `Bearer ${token}`} : {}),
+            'Content-Type': 'application/json',
+        }
+
+        let res = await fetch('https://ftmo.bob-digital.com/api/matches', {headers})
+        if (!res.ok) res = await fetch('https://ftmo.bob-digital.com/api/matches/', {headers})
+        if (!res.ok) throw new Error('Impossible de charger les matchs.')
+
+        const data = await res.json()
+        matches.value = Array.isArray(data) ? data : []
+    } catch (e) {
+        errorMsg.value = e?.message || 'Erreur inconnue.'
+    } finally {
+        loading.value = false
+    }
 }
 
 function fmtTime(isoOrHHMMSS) {
@@ -56,8 +96,10 @@ onMounted(async () => {
     // Chargement du club courant
     try {
         const response = await fetch(`https://ftmo.bob-digital.com/api/teams/${clubId}`)
+
         if (!response.ok) throw new Error(`Erreur de chargement du club (status : ${response.status})`)
         club.value = await response.json()
+        console.log(club.value)
     } catch (error) {
         console.error('Erreur lors du chargement des données du club :', error)
     }
@@ -74,12 +116,13 @@ onMounted(async () => {
     } catch (err) {
         console.error('Erreur de chargement des clubs :', err)
     }
+    fetchAllMatches()
 })
 
 // Colonnes du tableau joueurs
 const playerColumns = [
     { field: 'name', label: 'Joueur', pinned: true, sortable: false },
-    { field: 'position', label: 'Classement', pinned: false, sortable: true },
+    // { field: 'position', label: 'Classement', pinned: false, sortable: true },
     { field: 'matches', label: 'Matchs joués', pinned: false, sortable: true },
     {
         field: 'stats',
@@ -108,16 +151,54 @@ const playerColumns = [
 
 const playerRows = ref([])
 
-onMounted(() => {
-    playerRows.value = [
-        { name: 'Martin Dupont', position: 1, 'matches Win': 10, matches: 12, stats: '83.3%', 'matches lost': 25 },
-        { name: 'Laura Bernard', position: 2, 'matches Win': 8, matches: 11, stats: '72.7%', 'matches lost': 22 },
-        { name: 'Sophie Leroy', position: 3, matches: 10, 'set win': 20, stats: '70.0%', 'matches Win': 7, 'matches lost': 9 },
-        { name: 'Antoine Girard', position: 4, 'matches Win': 6, matches: 10, stats: '60.0%', 'matches lost': 18 },
-        { name: 'Thomas Moreau', position: 5, matches: 9, 'set win': 15, stats: '55.6%', 'matches Win': 5, 'matches lost': 12 },
-        { name: 'Élodie Caron', position: 6, matches: 8, 'matches Win': 4, stats: '50.0%', 'matches lost': 12 },
-        { name: 'Pierre Fontaine', position: 7, matches: 8, 'matches Win': 3, stats: '37.5%', 'matches lost': 10 },
-    ]
+onMounted(async () => {
+    // Chargement du club courant
+    try {
+        const response = await fetch(`https://ftmo.bob-digital.com/api/teams/${clubId}`)
+        if (!response.ok) throw new Error(`Erreur de chargement du club (status : ${response.status})`)
+        club.value = await response.json()
+    } catch (error) {
+        console.error('Erreur lors du chargement des données du club :', error)
+    }
+
+    // >>> ICI: construire le tableau joueurs depuis l'API
+    if (club.value?.players?.length) {
+        const rows = club.value.players.map(p => {
+            const rate = typeof p.win_rate === 'number' ? p.win_rate : 0
+            return {
+                name: [p.first_name, p.last_name].filter(Boolean).join(' '),
+                'matches Win': p.matches_won ?? 0,
+                'matches lost': p.matches_lost ?? 0,
+                matches: p.matches_played ?? 0,
+                stats: `${rate.toFixed(1)}%`,
+            }
+        })
+
+        // Tri: gagnés desc, puis % victoire, puis matches joués
+        rows.sort((a, b) =>
+            (b['matches Win'] - a['matches Win']) ||
+            (parseFloat(b.stats) - parseFloat(a.stats)) ||
+            (b.matches - a.matches)
+        )
+
+        // Rang (position)
+        rows.forEach((r, i) => { r.position = i + 1 })
+
+        playerRows.value = rows
+    }
+
+    // Liste des clubs (slider)
+    try {
+        const res = await fetch('https://ftmo.bob-digital.com/api/teams/')
+        if (!res.ok) throw new Error(`Erreur de chargement des clubs (status : ${res.status})`)
+        const data = await res.json()
+        cities.value = data.map(team => ({
+            name: team.club_name,
+            image: team.image || '/src/assets/images/deulemont.jpeg'
+        }))
+    } catch (err) {
+        console.error('Erreur de chargement des clubs :', err)
+    }
 })
 
 // Sanitisation du HTML TinyMCE
@@ -191,20 +272,17 @@ const desc2 = computed(() => DOMPurify.sanitize(club.value?.club_description_par
         />
 
         <div class="city-slider-container">
-            <Splide
-                :options="{ perPage: 3, arrows: true, gap: '1rem', pagination: false, focus: 'left', trimSpace: true, perMove: 1,
-                    breakpoints: { 1124: { perPage: 2 }, 640: { perPage: 1 } } }"
-            >
-                <SplideSlide v-for="(city, i) in cities" :key="i">
+            <Splide :options="{ perPage: 3, gap: '1rem', rewind: true }">
+                <SplideSlide v-for="match in upcomingMatches" :key="match.id">
                     <MatchCard
-                        details-url="https://google.fr"
-                        venue="Salle Victor Hugo, Lille"
-                        match-time="14h30"
-                        match-date="23 Avril 2025"
-                        away-logo="../../src/assets/images/deulemont.jpeg"
-                        away-name="Deulemont"
-                        home-logo="../../src/assets/images/deulemont.jpeg"
-                        home-name="Verlinghem"
+                        :home-name="match.home_team_name"
+                        :away-name="match.away_team_name"
+                        :home-logo="match.home_team_logo ? `https://ftmo.bob-digital.com/media/${match.home_team_logo}` : ''"
+                        :away-logo="match.away_team_logo ? `https://ftmo.bob-digital.com/media/${match.away_team_logo}` : ''"
+                        :match-date="fmtDateHeader(match.scheduled_datetime)"
+                        :match-time="fmtTime(match.scheduled_datetime)"
+                        :venue="match.home_team_name"
+                        :show-btn="false"
                     />
                 </SplideSlide>
             </Splide>

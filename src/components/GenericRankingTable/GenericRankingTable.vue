@@ -11,7 +11,17 @@
         />
         -->
 
+        <div v-if="showSearch" class="ranking-search">
+            <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Rechercher…"
+                aria-label="Rechercher"
+            />
+        </div>
+
         <div class="ranking-table-wrapper"  id="rank-scroll" :style="{ width }">
+
             <!-- Bloc « pinned » : colonnes marquées pinned = true -->
             <div class="rank-pinned">
                 <table class="ranking-table ranking-left">
@@ -93,7 +103,10 @@ const props = defineProps({
     // Chaque colonne peut maintenant comporter, en plus de field/label/pinned/sortable/formatter :
     //   - color      : string CSS (ex. '#12B221' ou 'green'), qui sera passée en style sur le <td>
     //   - cellClass  : string (nom de classe CSS), qui sera appliqué au <td>
-
+    showSearch: {
+        type: Boolean,
+        default: false
+    },
     columns: {
         type: Array,
         required: true,
@@ -158,10 +171,10 @@ const scrollableColumns = computed(() =>
 
 // Lignes triées dynamiquement (ou non si sortKey est null)
 const sortedRows = computed(() => {
-    if (!sortKey.value) {
-        return props.rows
-    }
-    return [...props.rows].sort((a, b) => {
+    const base = filteredRows.value
+    if (!sortKey.value) return base
+
+    return [...base].sort((a, b) => {
         const va = a[sortKey.value]
         const vb = b[sortKey.value]
         if (typeof va === 'number' && typeof vb === 'number') {
@@ -174,6 +187,23 @@ const sortedRows = computed(() => {
         return 0
     })
 })
+const searchQuery = ref('')
+
+const searchableFields = computed(() =>
+    props.columns.map(c => c.field).filter(Boolean)
+)
+
+const filteredRows = computed(() => {
+    if (!props.showSearch || !searchQuery.value.trim()) return props.rows
+    const q = searchQuery.value.toLowerCase()
+    return props.rows.filter(row =>
+        searchableFields.value.some(f => {
+            const v = row?.[f]
+            return v != null && String(v).toLowerCase().includes(q)
+        })
+    )
+})
+
 
 // Calcul d'une classe CSS additionnelle en fonction de la colonne et de la valeur row[col.field]
 // Vous pouvez y garder vos règles existantes, ou les adapter.

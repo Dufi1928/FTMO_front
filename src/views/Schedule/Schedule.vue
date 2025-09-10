@@ -10,6 +10,7 @@ import MainPageTitle from "../../components/MainPageTitle/MainPageTitle.vue";
 import { ref, computed, onMounted } from 'vue'
 import MatchCard from "../../components/MatchCard/MatchCard.vue"
 import MapProClubs from "../../components/Map/MapProClubs.vue"
+import MapClubsByPosition from "../../components/MapClubsByPosition/MapClubsByPosition.vue";
 
 const loading = ref(true)
 const errorMsg = ref('')
@@ -53,7 +54,7 @@ onMounted(fetchAllMatches)
 /* ------------ Helpers ------------ */
 const fmtDateHeader = (iso) =>
     new Date(iso).toLocaleDateString('fr-FR', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        year: 'numeric', month: 'long', day: 'numeric',
     })
 const fmtTime = (iso) =>
     new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
@@ -199,7 +200,7 @@ function coerceBool(v) {
     <!-- (Ton bloc carte) -->
     <template>
         <div class="map-container-home h-screen">
-            <MapProClubs api-key="hwPULScg2AcyGIZf8gl0"/>
+            <MapClubsByPosition :show-filters="false" />
         </div>
     </template>
 

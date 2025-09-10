@@ -79,23 +79,64 @@
 /* Select prend tout l’espace dispo */
 .filters-bar select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db; /* gris clair */
+    border-radius: 12px;
     background: #fff;
+    font-size: 1rem;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    color: #111827;
+    appearance: none; /* supprime le style natif */
+    outline: none;
+    transition: all 0.2s ease;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' class='feather feather-chevron-down'%3E%3Cpath d='M4 6l3 3 3-3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+}
+
+.filters-bar select:hover {
+    border-color: #9ca3af;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.filters-bar select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
 }
 
 /* Bouton reset */
 .btn-reset {
-    padding: 8px 12px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    padding: 10px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
     background: #fff;
+    font-size: 0.95rem;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    color: #374151;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
+
 .btn-reset:hover {
-    background: #f9fafb;
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
 }
+
+.btn-reset:active {
+    background: #e5e7eb;
+    transform: scale(0.97);
+}
+
+.btn-reset:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+}
+
 
 /* Responsive → pile verticale */
 @media (max-width: 768px) {

@@ -1,10 +1,10 @@
-
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Step1MJ from '../Matches/Step1MJ/Step1MJ.vue'
 import Step2M from '../Matches/Step2M/Step2M.vue'
 import Step3D from '../Matches/Step3D/Step3D.vue'
 import './MatchEditor.css'
+
 const props = defineProps({ match: Object, visible: Boolean, isHomeTeam: Boolean })
 const emit = defineEmits(['close'])
 
@@ -15,14 +15,21 @@ const snackbarMessage = ref('')
 const snackbarVisible = ref(false)
 const snackbarType = ref('success')
 
+// ➜ Mode “empilé” si on joue à l’extérieur
+const showAll = computed(() => !props.isHomeTeam)
+
 async function fetchHomeTeam() {
     const token = localStorage.getItem('accessToken')
-    const res = await fetch(`https://ftmo.bob-digital.com/api/teams/my_team/`, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } })
+    const res = await fetch(`https://ftmo.bob-digital.com/api/teams/my_team/`, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
+    })
     if (!res.ok) throw new Error('Erreur récupération équipe')
     return (await res.json()).team.players
 }
 async function fetchAwayTeam(teamId) {
-    const res = await fetch(`https://ftmo.bob-digital.com/api/teams/${teamId}/`, { headers: { 'Content-Type': 'application/json' } })
+    const res = await fetch(`https://ftmo.bob-digital.com/api/teams/${teamId}/`, {
+        headers: { 'Content-Type': 'application/json' }
+    })
     if (!res.ok) throw new Error('Erreur récupération équipe')
     return (await res.json()).players
 }
@@ -40,7 +47,7 @@ onMounted(async () => {
         snackbarMessage.value = err.message
         snackbarType.value = 'error'
         snackbarVisible.value = true
-        setTimeout(() => snackbarVisible.value = false, 3000)
+        setTimeout(() => (snackbarVisible.value = false), 3000)
     }
 })
 
@@ -54,43 +61,71 @@ function prevStep() { if (step.value > 1) step.value-- }
             {{ snackbarMessage }}
         </div>
     </transition>
+
     <transition name="slide-right">
         <div class="multi-step-form" v-if="visible">
             <div class="form-header">
                 <button class="btn-secondary" @click="$emit('close')">Fermer</button>
-                <h2 class="page-title">Étape {{ step }} sur 3</h2>
+
+                <!-- Titre différent selon le mode -->
+                <h2 class="page-title" v-if="!showAll">Étape {{ step }} sur 3</h2>
+                <h2 class="page-title" v-else>Feuille de match (extérieur)</h2>
             </div>
 
-            <Step1MJ
-                v-if="step === 1"
-                :team1="team1"
-                :team2="team2"
-                :matchId="match.id"
-                @next-step="nextStep"
-            />
+            <!-- MODE EMPILÉ (extérieur) -->
+            <template v-if="showAll">
+                <div class="stack-mode">
+                    <Step1MJ
+                        v-if="showAll"
+                        :team1="team1"
+                        :team2="team2"
+                        :matchId="match.id"
+                        :isHomeTeam="isHomeTeam"
+                    />
+                    <Step2M
+                        :team1="team1"
+                        :team2="team2"
+                        :matchId="match.id"
+                        @next-step="() => {}"
+                    />
+                    <Step3D
+                        :team1="team1"
+                        :team2="team2"
+                        :matchId="match.id"
+                        @next-step="() => {}"
+                    />
+                </div>
+            </template>
 
-            <Step2M
-                v-else-if="step === 2"
-                :team1="team1"
-                :team2="team2"
-                :matchId="match.id"
-                @next-step="nextStep"
-            />
+            <!-- MODE STEPPER (domicile) -->
+            <template v-else>
+                <Step1MJ
+                    v-if="step === 1"
+                    :team1="team1"
+                    :team2="team2"
+                    :matchId="match.id"
+                    @next-step="nextStep"
+                />
+                <Step2M
+                    v-else-if="step === 2"
+                    :team1="team1"
+                    :team2="team2"
+                    :matchId="match.id"
+                    @next-step="nextStep"
+                />
+                <Step3D
+                    v-else-if="step === 3"
+                    :team1="team1"
+                    :team2="team2"
+                    :matchId="match.id"
+                    @next-step="nextStep"
+                />
 
-            <Step3D
-                v-else-if="step === 3"
-                :team1="team1"
-                :team2="team2"
-                :matchId="match.id"
-                @next-step="nextStep"
-            />
-
-            <div class="btn-row">
-                <button class="btn-secondary" @click="prevStep" v-if="step > 1">⬅ Retour</button>
-                <button class="btn-primary btn-primary-step" @click="nextStep" v-if="step < 3">Suivant ➔</button>
-            </div>
+                <div class="btn-row">
+                    <button class="btn-secondary" @click="prevStep" v-if="step > 1">⬅ Retour</button>
+                    <button class="btn-primary btn-primary-step" @click="nextStep" v-if="step < 3">Suivant ➔</button>
+                </div>
+            </template>
         </div>
     </transition>
 </template>
-
-

@@ -1,6 +1,5 @@
-/* Step2M.vue */
 <template>
-    <div class="table-responsive">
+    <div class="table-responsive" :class="{ 'read-only': readOnly }">
         <table class="sets-table">
             <thead>
             <tr><th>Match</th><th>Dom.</th><th>Ext.</th><th>Score D</th><th>Score E</th></tr>
@@ -10,7 +9,7 @@
                 <td>{{ s.match_identifier }}</td>
 
                 <td>
-                    <select v-model.number="form[i].home_id">
+                    <select v-model.number="form[i].home_id" :disabled="readOnly">
                         <option :value="null">Sélectionner</option>
                         <option
                             v-for="p in filteredHomeOptions(s.match_identifier, s.home_id)"
@@ -23,7 +22,7 @@
                 </td>
 
                 <td>
-                    <select v-model.number="form[i].visitor_id">
+                    <select v-model.number="form[i].visitor_id" :disabled="readOnly">
                         <option :value="null">Sélectionner</option>
                         <option
                             v-for="p in filteredAwayOptions(s.match_identifier, s.visitor_id)"
@@ -36,13 +35,13 @@
                 </td>
 
                 <td>
-                    <select v-model.number="form[i].home_score">
+                    <select v-model.number="form[i].home_score" :disabled="readOnly">
                         <option :value="null">-</option>
                         <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
                     </select>
                 </td>
                 <td>
-                    <select v-model.number="form[i].visitor_score">
+                    <select v-model.number="form[i].visitor_score" :disabled="readOnly">
                         <option :value="null">-</option>
                         <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
                     </select>
@@ -58,14 +57,30 @@
             </tfoot>
         </table>
     </div>
-    <button class="btn-primary save" @click="saveSets" :disabled="!isValid">Sauvegarder</button>
+
+    <!-- Bouton masqué si extérieur -->
+    <button
+        v-if="!readOnly"
+        class="btn-primary save"
+        @click="saveSets"
+        :disabled="!isValid"
+    >
+        Sauvegarder
+    </button>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 
-const props = defineProps({ team1: Array, team2: Array, matchId: Number })
+const props = defineProps({
+    team1: Array,
+    team2: Array,
+    matchId: Number,
+    isHomeTeam: Boolean, // <-- ajouté
+})
 const emit = defineEmits(['next-step', 'error'])
+
+const readOnly = computed(() => !props.isHomeTeam) // extérieur => lecture seule
 
 // Initialize form
 const form = ref([
@@ -89,21 +104,22 @@ const form = ref([
     { match_identifier: 'M6-M6', home_id: null, visitor_id: null, home_score: '', visitor_score: '' }
 ])
 
-// Pools (si besoin ailleurs)
 const teamHome = computed(() => props.team1)
 const teamAway = computed(() => props.team2)
 
-// IDs used in first half (M1-M3)
 const usedHomeFirstHalf = computed(() =>
-    form.value.filter(r => ['M1','M2','M3'].includes(r.match_identifier.split('-')[0]))
-        .map(r => r.home_id).filter(Boolean)
+    form.value
+        .filter(r => ['M1','M2','M3'].includes(r.match_identifier.split('-')[0]))
+        .map(r => r.home_id)
+        .filter(Boolean)
 )
 const usedAwayFirstHalf = computed(() =>
-    form.value.filter(r => ['M1','M2','M3'].includes(r.match_identifier.split('-')[1]))
-        .map(r => r.visitor_id).filter(Boolean)
+    form.value
+        .filter(r => ['M1','M2','M3'].includes(r.match_identifier.split('-')[1]))
+        .map(r => r.visitor_id)
+        .filter(Boolean)
 )
 
-// Helpers: inclure l'ID courant si filtré
 function ensureCurrent(list, all, currentId) {
     if (currentId == null) return list
     const cid = Number(currentId)
@@ -114,12 +130,13 @@ function ensureCurrent(list, all, currentId) {
     return list
 }
 
-// Option filters (conservent l'affichage + garantissent la présence de l'option sélectionnée)
 function filteredHomeOptions(matchId, currentHomeId) {
     const group = matchId.split('-')[0]
     let list = props.team1
     if (['M4','M5','M6'].includes(group)) {
-        list = props.team1.filter(p => Number(p.id) === Number(currentHomeId) || !usedHomeFirstHalf.value.includes(Number(p.id)))
+        list = props.team1.filter(
+            p => Number(p.id) === Number(currentHomeId) || !usedHomeFirstHalf.value.includes(Number(p.id))
+        )
     }
     return ensureCurrent(list, props.team1, currentHomeId)
 }
@@ -127,15 +144,18 @@ function filteredAwayOptions(matchId, currentAwayId) {
     const group = matchId.split('-')[1]
     let list = props.team2
     if (['M4','M5','M6'].includes(group)) {
-        list = props.team2.filter(p => Number(p.id) === Number(currentAwayId) || !usedAwayFirstHalf.value.includes(Number(p.id)))
+        list = props.team2.filter(
+            p => Number(p.id) === Number(currentAwayId) || !usedAwayFirstHalf.value.includes(Number(p.id))
+        )
     }
     return ensureCurrent(list, props.team2, currentAwayId)
 }
 
-// Propagation des sélections (inchangé)
+// Propagation des sélections (désactivée en lecture seule)
 watch(
     () => form.value.map(r => r.home_id),
     (newIds, oldIds = []) => {
+        if (readOnly.value) return
         newIds.forEach((newId, idx) => {
             if (newId !== oldIds[idx]) {
                 const group = form.value[idx].match_identifier.split('-')[0]
@@ -149,6 +169,7 @@ watch(
 watch(
     () => form.value.map(r => r.visitor_id),
     (newIds, oldIds = []) => {
+        if (readOnly.value) return
         newIds.forEach((newId, idx) => {
             if (newId !== oldIds[idx]) {
                 const group = form.value[idx].match_identifier.split('-')[1]
@@ -160,10 +181,11 @@ watch(
     }
 )
 
-// Auto-balance scores (inchangé)
+// Auto-balance scores (désactivé en lecture seule)
 watch(
     () => form.value.map(r => ({ home: r.home_score, away: r.visitor_score })),
     (newVals, oldVals = []) => {
+        if (readOnly.value) return
         newVals.forEach((val, idx) => {
             const prev = oldVals[idx] || { home: '', away: '' }
             if (val.home !== prev.home && val.home !== 3 && val.home !== '') {
@@ -176,9 +198,12 @@ watch(
     }
 )
 
-// Totals & Validation
-const totalHome = computed(() => form.value.reduce((sum, s) => sum + (parseInt(s.home_score) || 0), 0))
-const totalAway = computed(() => form.value.reduce((sum, s) => sum + (parseInt(s.visitor_score) || 0), 0))
+const totalHome = computed(() =>
+    form.value.reduce((sum, s) => sum + (parseInt(s.home_score) || 0), 0)
+)
+const totalAway = computed(() =>
+    form.value.reduce((sum, s) => sum + (parseInt(s.visitor_score) || 0), 0)
+)
 const isValid = computed(() =>
     form.value.every(s =>
         Number.isInteger(s.home_id) &&
@@ -188,7 +213,6 @@ const isValid = computed(() =>
     )
 )
 
-// Fetch & Prefill (compatible nouveau back)
 async function fetchExistingSets() {
     const token = localStorage.getItem('accessToken')
     try {
@@ -213,7 +237,6 @@ onMounted(async () => {
     sets.forEach(set => {
         const idx = form.value.findIndex(f => f.match_identifier === set.match_identifier)
         if (idx === -1) return
-        // Nouveau back (listes) + fallback anciens champs
         const home = Array.isArray(set.home_players) ? set.home_players[0] : set.home_player
         const away = Array.isArray(set.away_players) ? set.away_players[0] : set.away_player
         form.value[idx].home_id = home ?? null
@@ -223,8 +246,9 @@ onMounted(async () => {
     })
 })
 
-// Save (déjà adapté au nouveau back)
+// Sécurité : ne rien faire en lecture seule
 async function saveSets() {
+    if (readOnly.value) return
     const payload = form.value.map(s => ({
         match: props.matchId,
         set_type: 'single',
@@ -251,11 +275,30 @@ async function saveSets() {
 </script>
 
 <style scoped>
-.table-responsive { width: 100%; overflow-x: auto; }
-.sets-table { min-width: 600px; }
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.sets-table {
+    min-width: 600px;
+}
 
 @media (max-width: 640px) {
-    .sets-table th, .sets-table td { padding: 0.5rem; }
-    .sets-table select { min-width: 120px; }
+    .sets-table th, .sets-table td {
+        padding: 0.5rem;
+    }
+
+    .sets-table select {
+        min-width: 120px;
+    }
+}
+
+.read-only {
+    opacity: 0.9;
+}
+
+.read-only select {
+    cursor: not-allowed;
 }
 </style>

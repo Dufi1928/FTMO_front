@@ -20,8 +20,9 @@ const errorMsg = ref('')
 function getImage(team) {
     // Fallback si image vide
     if (team?.image && typeof team.image === 'string' && team.image.trim() !== '') {
-        return team.image
+        return team.image_large
     }
+    console.log(team)
     return 'src/assets/images/deulemont.jpeg'
 }
 
@@ -79,7 +80,7 @@ onMounted(async () => {
     <Header theme="light" :key="auth.renderKey" :alwaysBlack="true" />
     <main class="clubs-page-container">
         <MainPageTitle
-            title="Les club près de chez vous"
+            title="Les clubs près de chez vous"
             description="Retrouvez l’ensemble des clubs affiliés à la FTMO dans la métropole lilloise"
         />
 

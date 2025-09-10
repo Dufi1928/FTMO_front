@@ -1,3 +1,5 @@
+/* Header.css */
+
 /* =============== RÉGLAGES GÉNÉRAUX =============== */
 html, body {
     margin: 0;
@@ -10,8 +12,6 @@ html, body {
 ::-webkit-scrollbar {
     display: none
 }
-
-/* scrollbar cachée */
 
 /* =============== BARRE HEADER =============== */
 .header {
@@ -180,7 +180,6 @@ html, body {
     height: 100vh;
 }
 
-
 .mobile-panel-header{
     display:flex; justify-content:space-between; align-items:center;
     margin-bottom:32px;
@@ -227,4 +226,31 @@ html, body {
 }
 .d-none {
     display: none !important;
+}
+
+/* ===== Badge notifications sur l’icône ===== */
+.account-link .icon-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+.notif-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: #ff3b30;
+    color: #fff;
+    font: 700 11px/18px 'Lato', sans-serif;
+    text-align: center;
+    pointer-events: none;
+}
+@media (max-width: 767px) {
+    .mobile-panel .notif-badge {
+        top: -4px;
+        right: -6px;
+    }
 }
