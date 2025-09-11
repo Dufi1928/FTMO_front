@@ -79,10 +79,9 @@ const doubleColumns = [
     {
         field: 'pair',
         label: 'Paire',
-        pinned: true,
-        html: (row) =>
-            `<div class="double-pair"><div class="pair-names">${row.pair}</div><div class="pair-team">${row.team_name}</div></div>`
+        pinned: true
     },
+    { field: 'team_name', label: 'Équipe', sortable: true },
     {
         field: 'rank',
         label: 'Classement',

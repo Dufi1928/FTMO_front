@@ -224,12 +224,3 @@
     color: #fff;
 }
 
-/* ------ affichage des doubles ------ */
-.double-pair {
-    display: flex;
-    flex-direction: column;
-}
-.double-pair .pair-team {
-    font-size: 0.85em;
-    color: #4b5563;
-}
