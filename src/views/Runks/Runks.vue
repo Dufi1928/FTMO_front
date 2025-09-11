@@ -261,7 +261,7 @@ watch(activeTag, (tag) => {
             :columns="columns"
             :rows="ranking"
             :show-search="true"
-            row_height="80"
+            row_height="120"
         />
         <div v-else class="coming-soon">
             <p>Classement bientôt disponible</p>
