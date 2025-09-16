@@ -204,7 +204,6 @@
     align-items: center;
     gap: 0.6rem;
     width: var(--width-pinned);
-    background: #1e2b4a;
 }
 
 .player-avatar,

@@ -79,7 +79,8 @@ const doubleColumns = [
     {
         field: 'pair',
         label: 'Paire',
-        pinned: true
+        pinned: true,
+        html: (row) => `<span>${row.pair ?? ''}</span>`
     },
     { field: 'team_name', label: 'Équipe', sortable: true },
     {
@@ -172,21 +173,45 @@ function buildRankingFromPlayers(players) {
 }
 
 function buildRankingFromDoubles(results) {
-    const byPair = new Map()
+    const byPair = new Map();
+
+    const pairLabelOf = (r) => {
+        if (r.names) return r.names;
+        if (Array.isArray(r.players) && r.players.length) {
+            return r.players.map(p => `${p.first_name} ${p.last_name}`.trim()).join(' / ');
+        }
+        return 'inconnu';
+    };
+
+    const teamOfFirstPlayer = (r) => {
+        if (Array.isArray(r.player_ids) && r.player_ids.length && Array.isArray(r.players) && r.players.length) {
+            const firstId = [...r.player_ids].sort((a,b)=>a-b)[0]; // “premier” = plus petit id
+            const first = r.players.find(p => p.id === firstId) || r.players[0];
+            return first?.team_name || '';
+        }
+        return r.team_name || '';
+    };
+
     for (const r of results) {
-        const won = Number(r.points_scored) || 0
-        const lost = Number(r.points_conceded) || 0
+        const won = Number(r.points_scored) || 0;
+        const lost = Number(r.points_conceded) || 0;
+
         const key = Array.isArray(r.player_ids) && r.player_ids.length
-            ? [...r.player_ids].sort((a, b) => a - b).join('-')
-            : (r.names || 'inconnu')
+            ? [...r.player_ids].sort((a,b)=>a-b).join('-')
+            : pairLabelOf(r);
 
         if (!byPair.has(key)) {
-            byPair.set(key, { names: r.names || 'inconnu', team_name: r.team_name || '', won: 0, lost: 0 })
+            byPair.set(key, {
+                names: pairLabelOf(r),
+                team_name: teamOfFirstPlayer(r),
+                won: 0,
+                lost: 0
+            });
         }
-        const acc = byPair.get(key)
-        acc.won += won
-        acc.lost += lost
-        if (!acc.team_name && r.team_name) acc.team_name = r.team_name
+        const acc = byPair.get(key);
+        acc.won += won;
+        acc.lost += lost;
+        if (!acc.team_name) acc.team_name = teamOfFirstPlayer(r);
     }
 
     const rows = Array.from(byPair.values()).map(p => ({
@@ -195,9 +220,11 @@ function buildRankingFromDoubles(results) {
         won: p.won,
         lost: p.lost,
         diff: p.won - p.lost
-    }))
-    decorateAndSet(rows, 'pair')
+    }));
+
+    decorateAndSet(rows, 'pair');
 }
+
 
 async function fetchCategoryRanking(tag) {
     try {
