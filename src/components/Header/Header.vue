@@ -118,6 +118,11 @@ const headerClasses = computed(() => {
                     <img src="../../assets/icons/leaderboard_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
                     Le classement
                 </a>
+                <a href="/matches">
+                    <img src="../../assets/icons/score.svg" :class="{ 'd-none': theme === 'light' }" />
+                    <img src="../../assets/icons/score_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    Resultats des matchs
+                </a>
                 <a v-if="auth.isAuthenticated" href="/protected/admin/dashboard">Mon compte</a>
                 <a v-else href="/login">Connexion</a>
 
@@ -148,20 +153,25 @@ const headerClasses = computed(() => {
                     <img src="../../assets/icons/home_icon.svg" :class="{ 'd-none': theme === 'light' }"/>
                     <img src="../../assets/icons/home_icon_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
                     Accueil</a>
-                <a @click="closeMobile" href="#">
+                <a @click="closeMobile" href="/schedule">
                     <img src="../../assets/icons/calendar-lines.svg" :class="{ 'd-none': theme === 'light' }"/>
                     <img src="../../assets/icons/calendar-lines_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
                     Calendrier
                 </a>
-                <a @click="closeMobile" href="#">
+                <a @click="closeMobile" href="/about">
                     <img src="../../assets/icons/question-mark-circle.svg" :class="{ 'd-none': theme === 'light' }" />
                     <img src="../../assets/icons/question-mark-circle_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
                     À propos
                 </a>
-                <a @click="closeMobile" href="#">
+                <a @click="closeMobile" href="/runks">
                     <img src="../../assets/icons/leaderboard.svg" :class="{ 'd-none': theme === 'light' }" />
                     <img src="../../assets/icons/leaderboard_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
                     Le classement
+                </a>
+                <a @click="closeMobile" href="/matches">
+                    <img src="../../assets/icons/score.svg" :class="{ 'd-none': theme === 'light' }" />
+                    <img src="../../assets/icons/score_black.svg" :class="{ 'd-none': theme !== 'light' }"/>
+                    Resultats des matchs
                 </a>
                 <a
                     v-if="auth.isAuthenticated"

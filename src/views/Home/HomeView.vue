@@ -121,7 +121,7 @@ const upcomingMatches = computed(() => {
             <div class="hero-content">
                 <h1 class="hero-content-title">Le Tennis de table dans
                     la Métropole Lilloise</h1>
-                <a class="hero-content-cta" href="#">Découvrez nos clubs</a>
+                <a class="hero-content-cta" href="/clubs">Découvrez nos clubs</a>
             </div>
         </div>
     </div>
@@ -200,7 +200,7 @@ const upcomingMatches = computed(() => {
             background="#F9F9F9"
             title="Classement des Équipes"
             linkText="Voir le classement complet"
-            linkUrl="/clubs"
+            linkUrl="/runks"
         />
 
         <div class="ranking-table-wrapper" id="rank-scroll">

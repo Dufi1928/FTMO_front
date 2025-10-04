@@ -39,7 +39,6 @@ async function render(pageContext) {
         documentHtml,
         pageContext: {
             pageProps: pageContext.pageProps || {},
-            urlPathname: pageContext.urlPathname,
             routeParams: pageContext.routeParams // ✅ uniquement ce dont tu as besoin
         }
     }

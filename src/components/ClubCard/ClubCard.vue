@@ -79,6 +79,7 @@ const slotsCompact = computed(() => {
                     <img src="../../assets/icons/location_icon.svg" alt="Adresse" />
                     {{ address }}
                 </p>
+                <br>
                 <p>
                     <img src="../../assets/icons/clock_icon.svg" alt="Horaires" />
                     {{ slotsCompact }}

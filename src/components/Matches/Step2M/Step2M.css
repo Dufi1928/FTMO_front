@@ -1,0 +1,11 @@
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+.sets-table { min-width: 600px; }
+@media (max-width: 640px) {
+    .sets-table th, .sets-table td { padding: 0.5rem; }
+    .sets-table select { min-width: 120px; }
+}
+.read-only { opacity: 0.9; }
+.read-only select { cursor: not-allowed; }

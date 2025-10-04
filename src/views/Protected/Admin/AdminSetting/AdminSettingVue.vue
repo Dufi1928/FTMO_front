@@ -9,6 +9,7 @@ import ScheduleModal from '../../../../components/ScheduleModal/ScheduleModal.vu
 const team = reactive({
     id: null,
     club_name: '',
+    address: '',
     club_short_description: '',
     club_description_paragraph_1: '',
     club_description_paragraph_2: '',
@@ -98,20 +99,18 @@ async function saveTeam() {
                 headers: { ...auth, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     club_name: team.club_name,
+                    address: team.address,
                     club_short_description: team.club_short_description,
                     club_description_paragraph_1: team.club_description_paragraph_1,
                     club_description_paragraph_2: team.club_description_paragraph_2,
                     email: team.email || '',
-                    // Optionnel : si ton API accepte une URL string :
-                    // image: typeof team.image === 'string' ? team.image : undefined,
-                    // image_large: typeof team.image_large === 'string' ? team.image_large : undefined,
                 }),
             })
         } else {
             // ✅ Multipart uniquement si on a (au moins) un nouveau fichier
             const fd = new FormData()
             fd.append('club_name', team.club_name ?? '')
-            fd.append('club_short_description', team.club_short_description ?? '')
+            fd.append('address', team.address ?? '')
             fd.append('club_description_paragraph_1', team.club_description_paragraph_1 ?? '')
             fd.append('club_description_paragraph_2', team.club_description_paragraph_2 ?? '')
             if (team.email) fd.append('email', team.email)
@@ -220,18 +219,18 @@ async function deleteSchedule(sch) {
                 </div>
                 <!-- Short desc -->
                 <div class="form-group full">
-                    <label>Description courte</label>
-                    <textarea rows="2" v-model="team.club_short_description" />
+                    <label>Adresse</label>
+                    <textarea rows="3" v-model="team.address" />
                 </div>
                 <!-- P1 -->
                 <div class="form-group full">
                     <label>Paragraphe 1</label>
-                    <Editor api-key="ys50umjokncpboo35m888ozbvbdk3pk50bn3q10pm187zk3l" v-model="team.club_description_paragraph_1" :init="tinymceConfig" />
+                    <Editor api-key="zaytdfkjtelofi3kn6saryli13midod7kcck8jeuve4a8iim" v-model="team.club_description_paragraph_1" :init="tinymceConfig" />
                 </div>
                 <!-- P2 -->
                 <div class="form-group full">
                     <label>Paragraphe 2</label>
-                    <Editor api-key="ys50umjokncpboo35m888ozbvbdk3pk50bn3q10pm187zk3l" v-model="team.club_description_paragraph_2" :init="tinymceConfig" />
+                    <Editor api-key="zaytdfkjtelofi3kn6saryli13midod7kcck8jeuve4a8iim" v-model="team.club_description_paragraph_2" :init="tinymceConfig" />
                 </div>
                 <!-- Images -->
                 <div class="form-group">

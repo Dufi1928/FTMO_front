@@ -1,0 +1,300 @@
+.matche-page-title-wrapper {
+    position: relative;
+    background-image: url("../../assets/images/about/about_background.jpg"); /* ← depuis public/ */
+    background-size: cover;
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    width: 100%;
+    padding: 150px 0;
+    overflow: hidden;
+    font-family: 'Lato', sans-serif !important;
+}
+
+.matches-page-title-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000000;
+    opacity: 0.03;
+    z-index: 0;
+}
+
+.matches-page-title-wrapper > * {
+    position: relative;
+    z-index: 1;
+
+}
+
+.match-details-page {
+    width: 100%;
+}
+
+.steps-readonly {
+    display: grid;
+    gap: 24px;
+}
+
+.step-block {
+    width: 80%;
+    margin: auto;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.step-title {
+    margin: 0 0 12px;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.loading, .error {
+    text-align: center;
+    padding: 1rem;
+}
+
+.match-details-container {
+    max-width: 1100px;
+    margin: 20px auto 60px;
+    padding: 0 16px;
+}
+
+/* Sections */
+.results-section {
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 6px 20px rgba(20, 20, 43, 0.06);
+}
+
+.results-section__title {
+    margin: 4px 8px 14px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    color: #1e2540;
+    font-family: 'Lato', sans-serif !important;
+}
+
+/* Table générique */
+.sets-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid #eef0f5;
+}
+
+.sets-table thead th {
+    background: linear-gradient(180deg, #f8f9fc 0%, #f2f4f8 100%);
+    color: #1f2a50;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e6e9f0;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-family: 'Lato', sans-serif !important;
+}
+
+.sets-table tbody td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    color: #2a3152;
+    background: #fff;
+    font-family: 'Lato', sans-serif !important;
+}
+
+.sets-table tbody tr.row-set {
+    border-bottom: 1px solid #f0f2f7;
+    transition: background 0.2s ease, transform 0.06s ease;
+}
+
+.sets-table tbody tr.row-set:hover {
+    background: #fafbff;
+}
+
+.sets-table .col-score,
+.sets-table .score {
+    text-align: center;
+    font-weight: 800;
+    color: #111b44;
+    white-space: nowrap;
+}
+
+.sets-table .score strong {
+    display: inline-block;
+    min-width: 84px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #f7f8fe;
+    border: 1px solid #eaecf5;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Total par section */
+.sets-table tfoot .total-row td {
+    background: #f9fbff;
+    border-top: 1px solid #e6e9f0;
+    font-weight: 900;
+    color: #111b44;
+    padding: 14px 16px;
+    font-family: 'Lato', sans-serif !important;
+}
+
+.total-row td:first-child {
+    border-radius: 0 0 0 5px;
+    font-family: 'Lato', sans-serif !important;
+}
+
+.total-row td:last-child {
+    border-radius: 0 0 5px 0;
+    font-family: 'Lato', sans-serif !important;
+}
+
+/* Total global */
+.total-row--global td {
+    font-size: 1.02rem;
+    background: linear-gradient(180deg, #f7f9ff 0%, #eef3ff 100%);
+    border-top: 1px solid #dfe7ff;
+    font-family: 'Lato', sans-serif !important;
+}
+
+/* Cellule vide */
+.sets-table .empty {
+    color: #7a839e;
+    font-style: italic;
+    text-align: center;
+    padding: 18px 12px;
+}
+
+.no-sets {
+    margin-top: 16px;
+}
+
+/* --------- Responsive --------- */
+@media (max-width: 900px) {
+    .results-section {
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .sets-table {
+        border-radius: 5px;
+    }
+
+    .sets-table thead th,
+    .sets-table tbody td {
+        padding: 12px;
+    }
+
+    .sets-table .score strong {
+        min-width: 72px;
+        padding: 5px 8px;
+    }
+}
+
+/* Mode cartes (stack) en très petit écran */
+@media (max-width: 640px) {
+    .sets-table thead {
+        display: none;
+    }
+
+    .sets-table,
+    .sets-table tbody,
+    .sets-table tr,
+    .sets-table td,
+    .sets-table tfoot {
+        display: block;
+        width: 100%;
+    }
+
+    .sets-table tbody tr.row-set {
+        background: #fff;
+        border: 1px solid #eef0f5;
+        border-radius: 5px;
+        padding: 10px 12px;
+        margin: 10px 0;
+    }
+
+    .sets-table tbody tr.row-set td {
+        padding: 6px 0;
+    }
+
+    /* Labels de colonnes simulés */
+    .sets-table tbody tr.row-set td:nth-child(1)::before {
+        content: "Épreuve";
+    }
+
+    .sets-table tbody tr.row-set td:nth-child(2)::before {
+        content: "Domicile";
+    }
+
+    .sets-table tbody tr.row-set td:nth-child(3)::before {
+        content: "Extérieur";
+    }
+
+    .sets-table tbody tr.row-set td:nth-child(4)::before {
+        content: "Score";
+    }
+
+    .sets-table tbody tr.row-set td::before {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #687089;
+        margin-bottom: 2px;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+    }
+
+    .sets-table .score {
+        text-align: left;
+    }
+
+    /* Footer (total) comme une carte */
+    .sets-table tfoot .total-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        border: 1px solid #e6e9f0;
+        border-radius: 5px;
+        padding: 10px 12px;
+        margin-top: 12px;
+        background: #f7f9ff;
+        font-family: 'Lato', sans-serif !important;
+    }
+
+    .sets-table tfoot .total-row td:nth-child(1) {
+        grid-column: 1 / span 1;
+        font-weight: 800;
+    }
+
+    .sets-table tfoot .total-row td:nth-child(4) {
+        grid-column: 2 / span 1;
+        justify-self: end;
+    }
+}
+
+/* Micro-tuning pour très petits écrans */
+@media (max-width: 380px) {
+    .sets-table tbody tr.row-set {
+        padding: 8px 10px;
+    }
+
+    .sets-table .score strong {
+        min-width: 62px;
+        padding: 4px 6px;
+        border-radius: 7px;
+    }
+}

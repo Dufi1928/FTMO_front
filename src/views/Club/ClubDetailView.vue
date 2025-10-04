@@ -5,7 +5,7 @@ import Header from "../../components/Header/Header.vue"
 import Footer from "../../components/Footer/Footer.vue"
 import MainPageTitle from "../../components/MainPageTitle/MainPageTitle.vue"
 import { useAuthStore } from "../../../stores/auth.js"
-import './Club.css'
+import './ClubDetail.css'
 import '@splidejs/vue-splide/css'
 import SecundaryPageTitle from "../../components/SecundaryPageTitle/SecundaryPageTitle.vue"
 import GenericRankingTable from "../../components/GenericRankingTable/GenericRankingTable.vue"

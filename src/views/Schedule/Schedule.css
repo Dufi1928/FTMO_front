@@ -1,9 +1,24 @@
 /* Container */
-.schedule-wrapper { display: grid; gap: 1.25rem; }
 
-.title { margin: 0; font-size: 1.5rem; font-weight: 700; }
-.subtitle { margin: .25rem 0 0 0; color: #6b7280; font-size: .95rem; }
-.actions { display: flex; gap: .75rem; align-items: center; }
+
+.title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.subtitle {
+    margin: .25rem 0 0 0;
+    color: #6b7280;
+    font-size: .95rem;
+}
+
+.actions {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+}
+
 .schedule-page-title-wrapper {
     position: relative;
     background-image: url("../../assets/images/about/about_background.jpg"); /* ← depuis public/ */
@@ -14,10 +29,14 @@
     padding: 150px 0;
     overflow: hidden;
 }
-.schedule-wrapper{
+
+.schedule-wrapper {
+    display: flex;
+    justify-content: center;
     width: 80%;
     margin: auto;
 }
+
 
 .schedule-page-title-wrapper::before {
     content: "";
@@ -35,22 +54,39 @@
     position: relative;
     z-index: 1;
 }
+
 .cards-grid {
     margin-top: 40px;
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    max-width: 1200px; /* optionnel pour limiter à 3 */
+    max-width: 1200px;
     gap: 50px;
     margin-bottom: 50px;
 }
 
-.map-container-home{
-    width:100%;
-    height:500px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+/* Écrans moyens → 2 colonnes */
+@media (max-width: 900px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+}
+
+/* Petits écrans → 1 colonne */
+@media (max-width: 724px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+.map-container-home {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     overflow: hidden;
 }
 
@@ -98,12 +134,12 @@
 
 .filters-bar select:hover {
     border-color: #9ca3af;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .filters-bar select:focus {
     border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 /* Bouton reset */
@@ -123,7 +159,7 @@
 .btn-reset:hover {
     background: #f3f4f6;
     border-color: #9ca3af;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .btn-reset:active {
@@ -134,7 +170,7 @@
 .btn-reset:focus {
     outline: none;
     border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.2);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 

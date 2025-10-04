@@ -1,130 +1,78 @@
-<template>
-    <div class="table-responsive" :class="{ 'read-only': readOnly }">
-        <table class="sets-table">
-            <thead>
-            <tr><th>Match</th><th>Dom.</th><th>Ext.</th><th>Score D</th><th>Score E</th></tr>
-            </thead>
-            <tbody>
-            <tr v-for="(s, i) in form" :key="s.match_identifier">
-                <td>{{ s.match_identifier }}</td>
-
-                <td>
-                    <select v-model.number="form[i].home_id" :disabled="readOnly">
-                        <option :value="null">Sélectionner</option>
-                        <option
-                            v-for="p in filteredHomeOptions(s.match_identifier, s.home_id)"
-                            :key="p.id"
-                            :value="Number(p.id)"
-                        >
-                            {{ p.first_name }} {{ p.last_name }}
-                        </option>
-                    </select>
-                </td>
-
-                <td>
-                    <select v-model.number="form[i].visitor_id" :disabled="readOnly">
-                        <option :value="null">Sélectionner</option>
-                        <option
-                            v-for="p in filteredAwayOptions(s.match_identifier, s.visitor_id)"
-                            :key="p.id"
-                            :value="Number(p.id)"
-                        >
-                            {{ p.first_name }} {{ p.last_name }}
-                        </option>
-                    </select>
-                </td>
-
-                <td>
-                    <select v-model.number="form[i].home_score" :disabled="readOnly">
-                        <option :value="null">-</option>
-                        <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
-                    </select>
-                </td>
-                <td>
-                    <select v-model.number="form[i].visitor_score" :disabled="readOnly">
-                        <option :value="null">-</option>
-                        <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
-                    </select>
-                </td>
-            </tr>
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="3">Total</td>
-                <td>{{ totalHome }}</td>
-                <td>{{ totalAway }}</td>
-            </tr>
-            </tfoot>
-        </table>
-    </div>
-
-    <!-- Bouton masqué si extérieur -->
-    <button
-        v-if="!readOnly"
-        class="btn-primary save"
-        @click="saveSets"
-        :disabled="!isValid"
-    >
-        Sauvegarder
-    </button>
-</template>
-
+<!-- Step2M.vue -->
 <script setup>
+import "./Step2M.css"
 import { ref, computed, onMounted, watch } from 'vue'
 
 const props = defineProps({
     team1: Array,
     team2: Array,
     matchId: Number,
-    isHomeTeam: Boolean, // <-- ajouté
+    isHomeTeam: Boolean,
 })
 const emit = defineEmits(['next-step', 'error'])
 
-const readOnly = computed(() => !props.isHomeTeam) // extérieur => lecture seule
+const FORFAIT = 'FORFAIT'
+const readOnly = computed(() => !props.isHomeTeam)
 
-// Initialize form
 const form = ref([
-    { match_identifier: 'M1-M1', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M1-M2', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M1-M3', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M2-M1', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M2-M2', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M2-M3', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M3-M1', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M3-M2', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M3-M3', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M4-M4', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M4-M5', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M4-M6', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M5-M4', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M5-M5', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M5-M6', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M6-M4', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M6-M5', home_id: null, visitor_id: null, home_score: '', visitor_score: '' },
-    { match_identifier: 'M6-M6', home_id: null, visitor_id: null, home_score: '', visitor_score: '' }
+    { match_identifier: 'M1-M1', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M1-M2', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M1-M3', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M2-M1', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M2-M2', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M2-M3', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M3-M1', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M3-M2', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M3-M3', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M4-M4', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M4-M5', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M4-M6', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M5-M4', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M5-M5', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M5-M6', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M6-M4', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M6-M5', home_id: null, visitor_id: null, home_score: null, visitor_score: null },
+    { match_identifier: 'M6-M6', home_id: null, visitor_id: null, home_score: null, visitor_score: null }
 ])
 
-const teamHome = computed(() => props.team1)
-const teamAway = computed(() => props.team2)
+/* --- Helpers --- */
+const toInt = (v) => {
+    if (v == null || v === '' || v === FORFAIT) return null
+    const raw = (typeof v === 'object' && v !== null && 'id' in v) ? v.id : v
+    const n = Number(raw)
+    return Number.isInteger(n) ? n : null
+}
+const isScore = (n) => Number.isInteger(n) && n >= 0 && n <= 3
 
+/* --- Forfait helpers --- */
+function isForfaitHome (i)   { return form.value[i]?.home_id === FORFAIT }
+function isForfaitAway (i)   { return form.value[i]?.visitor_id === FORFAIT }
+function isForfaitRow  (i)   { return isForfaitHome(i) || isForfaitAway(i) }
+
+/* --- Groupes --- */
+const leftGroup  = (r) => r.match_identifier.split('-')[0]   // M1..M6 côté domicile
+const rightGroup = (r) => r.match_identifier.split('-')[1]   // M1..M6 côté extérieur
+
+/* --- Options filtrées (2e mi-temps) --- */
 const usedHomeFirstHalf = computed(() =>
     form.value
-        .filter(r => ['M1','M2','M3'].includes(r.match_identifier.split('-')[0]))
-        .map(r => r.home_id)
-        .filter(Boolean)
+        .filter(r => ['M1','M2','M3'].includes(leftGroup(r)))
+        .map(r => toInt(r.home_id))
+        .filter(Number.isInteger)
 )
 const usedAwayFirstHalf = computed(() =>
     form.value
-        .filter(r => ['M1','M2','M3'].includes(r.match_identifier.split('-')[1]))
-        .map(r => r.visitor_id)
-        .filter(Boolean)
+        .filter(r => ['M1','M2','M3'].includes(rightGroup(r)))
+        .map(r => toInt(r.visitor_id))
+        .filter(Number.isInteger)
 )
 
 function ensureCurrent(list, all, currentId) {
     if (currentId == null) return list
-    const cid = Number(currentId)
+    const cid = toInt(currentId)
+    if (cid == null) return list
     if (!list.some(p => Number(p.id) === cid)) {
-        const cur = all.find(p => Number(p.id) === cid)
+        const cur = (all || []).find(p => Number(p.id) === cid)
         if (cur) return [cur, ...list]
     }
     return list
@@ -132,87 +80,147 @@ function ensureCurrent(list, all, currentId) {
 
 function filteredHomeOptions(matchId, currentHomeId) {
     const group = matchId.split('-')[0]
-    let list = props.team1
+    let list = props.team1 || []
     if (['M4','M5','M6'].includes(group)) {
-        list = props.team1.filter(
-            p => Number(p.id) === Number(currentHomeId) || !usedHomeFirstHalf.value.includes(Number(p.id))
+        list = list.filter(
+            p => Number(p.id) === toInt(currentHomeId) || !usedHomeFirstHalf.value.includes(Number(p.id))
         )
     }
-    return ensureCurrent(list, props.team1, currentHomeId)
+    return ensureCurrent(list, props.team1 || [], currentHomeId)
 }
 function filteredAwayOptions(matchId, currentAwayId) {
     const group = matchId.split('-')[1]
-    let list = props.team2
+    let list = props.team2 || []
     if (['M4','M5','M6'].includes(group)) {
-        list = props.team2.filter(
-            p => Number(p.id) === Number(currentAwayId) || !usedAwayFirstHalf.value.includes(Number(p.id))
+        list = list.filter(
+            p => Number(p.id) === toInt(currentAwayId) || !usedAwayFirstHalf.value.includes(Number(p.id))
         )
     }
-    return ensureCurrent(list, props.team2, currentAwayId)
+    return ensureCurrent(list, props.team2 || [], currentAwayId)
 }
 
-// Propagation des sélections (désactivée en lecture seule)
+/* --- Préselection: une seule fois par groupe --- */
+const prefillDoneHome = ref(new Set())  // groupes déjà auto-remplis côté D
+const prefillDoneAway = ref(new Set())  // groupes déjà auto-remplis côté E
+
+function prefillGroupOnce(side, rowIndex, value) {
+    const id = toInt(value)
+    if (!Number.isInteger(id)) return
+
+    const g = side === 'home' ? leftGroup(form.value[rowIndex]) : rightGroup(form.value[rowIndex])
+    const flagSet = side === 'home' ? prefillDoneHome.value : prefillDoneAway.value
+    if (flagSet.has(g)) return
+
+    const key = side === 'home' ? 'home_id' : 'visitor_id'
+    const inGroup = (idx) =>
+        side === 'home'
+            ? leftGroup(form.value[idx]) === g
+            : rightGroup(form.value[idx]) === g
+
+    const idxs = form.value.map((_, i) => i).filter(inGroup)
+    // Groupe "vide" = tous null sauf la ligne en cours (qui vient d’être choisie)
+    const othersEmpty = idxs.every(i => i === rowIndex || form.value[i][key] == null)
+    if (!othersEmpty) { flagSet.add(g); return }
+
+    flagSet.add(g) // ne le fera qu'une seule fois
+    idxs.forEach(i => { if (i !== rowIndex) form.value[i][key] = id })
+}
+
+/* --- Handlers de select (déclenchent la préselection) --- */
+function onChangeHome(i) {
+    prefillGroupOnce('home', i, form.value[i].home_id)
+    normalizeForfait(i)
+}
+function onChangeAway(i) {
+    prefillGroupOnce('away', i, form.value[i].visitor_id)
+    normalizeForfait(i)
+}
+
+/* --- Reset des flags si un groupe est complètement vidé --- */
 watch(
     () => form.value.map(r => r.home_id),
-    (newIds, oldIds = []) => {
-        if (readOnly.value) return
-        newIds.forEach((newId, idx) => {
-            if (newId !== oldIds[idx]) {
-                const group = form.value[idx].match_identifier.split('-')[0]
-                form.value.forEach(r => {
-                    if (r.match_identifier.split('-')[0] === group) r.home_id = newId
-                })
-            }
+    () => {
+        const groups = [...new Set(form.value.map(leftGroup))]
+        groups.forEach(g => {
+            const idxs = form.value.map((r, i) => [i, r]).filter(([, r]) => leftGroup(r) === g).map(([i]) => i)
+            const allEmpty = idxs.every(i => form.value[i].home_id == null)
+            if (allEmpty) prefillDoneHome.value.delete(g)
         })
     }
 )
 watch(
     () => form.value.map(r => r.visitor_id),
-    (newIds, oldIds = []) => {
-        if (readOnly.value) return
-        newIds.forEach((newId, idx) => {
-            if (newId !== oldIds[idx]) {
-                const group = form.value[idx].match_identifier.split('-')[1]
-                form.value.forEach(r => {
-                    if (r.match_identifier.split('-')[1] === group) r.visitor_id = newId
-                })
-            }
+    () => {
+        const groups = [...new Set(form.value.map(rightGroup))]
+        groups.forEach(g => {
+            const idxs = form.value.map((r, i) => [i, r]).filter(([, r]) => rightGroup(r) === g).map(([i]) => i)
+            const allEmpty = idxs.every(i => form.value[i].visitor_id == null)
+            if (allEmpty) prefillDoneAway.value.delete(g)
         })
     }
 )
 
-// Auto-balance scores (désactivé en lecture seule)
+/* --- Forfait : préremplir 3–0 / 0–3 (option choisi ici) --- */
+function normalizeForfait(i) {
+    const r = form.value[i]
+    const homeF = r.home_id === FORFAIT
+    const awayF = r.visitor_id === FORFAIT
+    if (homeF && !awayF) { r.home_score = 0; r.visitor_score = 3 }
+    else if (awayF && !homeF) { r.home_score = 3; r.visitor_score = 0 }
+}
+
+/* --- Auto-balance scores (ignore les lignes forfait) --- */
 watch(
     () => form.value.map(r => ({ home: r.home_score, away: r.visitor_score })),
     (newVals, oldVals = []) => {
         if (readOnly.value) return
         newVals.forEach((val, idx) => {
-            const prev = oldVals[idx] || { home: '', away: '' }
-            if (val.home !== prev.home && val.home !== 3 && val.home !== '') {
-                form.value[idx].visitor_score = 3
+            if (isForfaitRow(idx)) return
+            const prev = oldVals[idx] || { home: null, away: null }
+            if (val.home !== prev.home) {
+                if (val.home != null && val.home !== 3) form.value[idx].visitor_score = 3
+                else if (val.home === 3 && form.value[idx].visitor_score === 3) form.value[idx].visitor_score = null
             }
-            if (val.away !== prev.away && val.away !== 3 && val.away !== '') {
-                form.value[idx].home_score = 3
+            if (val.away !== prev.away) {
+                if (val.away != null && val.away !== 3) form.value[idx].home_score = 3
+                else if (val.away === 3 && form.value[idx].home_score === 3) form.value[idx].home_score = null
             }
         })
-    }
+    },
+    { deep: true }
 )
 
+/* --- Totaux & validité --- */
 const totalHome = computed(() =>
     form.value.reduce((sum, s) => sum + (parseInt(s.home_score) || 0), 0)
 )
 const totalAway = computed(() =>
     form.value.reduce((sum, s) => sum + (parseInt(s.visitor_score) || 0), 0)
 )
+
 const isValid = computed(() =>
-    form.value.every(s =>
-        Number.isInteger(s.home_id) &&
-        Number.isInteger(s.visitor_id) &&
-        Number.isInteger(s.home_score) && s.home_score >= 1 && s.home_score <= 3 &&
-        Number.isInteger(s.visitor_score) && s.visitor_score >= 1 && s.visitor_score <= 3
-    )
+    form.value.every(s => {
+        const homeF = s.home_id === FORFAIT
+        const awayF = s.visitor_id === FORFAIT
+        if (homeF && awayF) return false
+
+        const h = toInt(s.home_id)
+        const a = toInt(s.visitor_id)
+
+        if (homeF) return Number.isInteger(a)
+        if (awayF) return Number.isInteger(h)
+
+        const scoresOk =
+            isScore(s.home_score) &&
+            isScore(s.visitor_score) &&
+            ((s.home_score === 3 && s.visitor_score < 3) ||
+                (s.visitor_score === 3 && s.home_score < 3))
+
+        return Number.isInteger(h) && Number.isInteger(a) && scoresOk
+    })
 )
 
+/* --- Récup existants --- */
 async function fetchExistingSets() {
     const token = localStorage.getItem('accessToken')
     try {
@@ -232,6 +240,21 @@ async function fetchExistingSets() {
     }
 }
 
+function detectForfaitFromExisting (i) {
+    const r = form.value[i]
+    if (!r) return
+    const hEmpty = (r.home_id == null)
+    const aEmpty = (r.visitor_id == null)
+    if (hEmpty && aEmpty && isScore(r.home_score) && isScore(r.visitor_score)) {
+        if (r.home_score === 0 && r.visitor_score === 3) {
+            r.home_id = FORFAIT
+        } else if (r.home_score === 3 && r.visitor_score === 0) {
+            r.visitor_id = FORFAIT
+        }
+        normalizeForfait(i)
+    }
+}
+
 onMounted(async () => {
     const sets = await fetchExistingSets()
     sets.forEach(set => {
@@ -239,31 +262,52 @@ onMounted(async () => {
         if (idx === -1) return
         const home = Array.isArray(set.home_players) ? set.home_players[0] : set.home_player
         const away = Array.isArray(set.away_players) ? set.away_players[0] : set.away_player
-        form.value[idx].home_id = home ?? null
-        form.value[idx].visitor_id = away ?? null
+        form.value[idx].home_id = Number.isInteger(home) ? home : null
+        form.value[idx].visitor_id = Number.isInteger(away) ? away : null
         form.value[idx].home_score = Number(set.home_points)
         form.value[idx].visitor_score = Number(set.away_points)
+        detectForfaitFromExisting(idx)
     })
 })
 
-// Sécurité : ne rien faire en lecture seule
+/* --- SAVE --- */
 async function saveSets() {
     if (readOnly.value) return
-    const payload = form.value.map(s => ({
-        match: props.matchId,
-        set_type: 'single',
-        match_identifier: s.match_identifier,
-        home_players: [s.home_id],
-        away_players: [s.visitor_id],
-        home_points: s.home_score,
-        away_points: s.visitor_score
-    }))
+
+    const payload = form.value.map(s => {
+        const homeF = (s.home_id === FORFAIT)
+        const awayF = (s.visitor_id === FORFAIT)
+
+        if (homeF && awayF) {
+            throw new Error('Les deux équipes ne peuvent pas être forfait en même temps.')
+        }
+
+        const h = toInt(s.home_id)
+        const a = toInt(s.visitor_id)
+
+        if (!homeF && !Number.isInteger(h)) {
+            throw new Error('Chaque match doit avoir un joueur côté domicile (sauf si domicile est forfait).')
+        }
+        if (!awayF && !Number.isInteger(a)) {
+            throw new Error('Chaque match doit avoir un joueur côté extérieur (sauf si extérieur est forfait).')
+        }
+
+        return {
+            match: props.matchId,
+            set_type: 'single',
+            match_identifier: s.match_identifier,
+            home_players: homeF ? [] : [h],
+            away_players: awayF ? [] : [a],
+            home_points: s.home_score,
+            away_points: s.visitor_score
+        }
+    })
 
     try {
         const token = localStorage.getItem('accessToken')
         const res = await fetch(`https://ftmo.bob-digital.com/api/matchsets/bulk_create/`, {
             method: 'POST',
-            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         })
         if (!res.ok) throw new Error('Erreur sauvegarde M')
@@ -274,31 +318,85 @@ async function saveSets() {
 }
 </script>
 
-<style scoped>
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-}
+<template>
+    <div class="table-responsive" :class="{ 'read-only': readOnly }">
+        <table class="sets-table">
+            <thead>
+            <tr><th>Match</th><th>Dom.</th><th>Ext.</th><th>Score D</th><th>Score E</th></tr>
+            </thead>
+            <tbody>
+            <tr v-for="(s, i) in form" :key="s.match_identifier">
+                <td>{{ s.match_identifier }}</td>
 
-.sets-table {
-    min-width: 600px;
-}
+                <!-- DOMICILE -->
+                <td>
+                    <select
+                        v-model="form[i].home_id"
+                        @change="onChangeHome(i)"
+                        :disabled="readOnly"
+                    >
+                        <option :value="null">Sélectionner</option>
+                        <option
+                            v-for="p in filteredHomeOptions(s.match_identifier, s.home_id)"
+                            :key="p.id"
+                            :value="Number(p.id)"
+                        >
+                            {{ p.first_name }} {{ p.last_name }}
+                        </option>
+                        <option :value="FORFAIT">Forfait</option>
+                    </select>
+                </td>
 
-@media (max-width: 640px) {
-    .sets-table th, .sets-table td {
-        padding: 0.5rem;
-    }
+                <!-- EXTERIEUR -->
+                <td>
+                    <select
+                        v-model="form[i].visitor_id"
+                        @change="onChangeAway(i)"
+                        :disabled="readOnly"
+                    >
+                        <option :value="null">Sélectionner</option>
+                        <option
+                            v-for="p in filteredAwayOptions(s.match_identifier, s.visitor_id)"
+                            :key="p.id"
+                            :value="Number(p.id)"
+                        >
+                            {{ p.first_name }} {{ p.last_name }}
+                        </option>
+                        <option :value="FORFAIT">Forfait</option>
+                    </select>
+                </td>
 
-    .sets-table select {
-        min-width: 120px;
-    }
-}
+                <!-- SCORES (éditables même en cas de forfait) -->
+                <td>
+                    <select v-model.number="form[i].home_score" :disabled="readOnly">
+                        <option :value="null">-</option>
+                        <option v-for="n in [0,1,2,3]" :key="`h${n}`" :value="n">{{ n }}</option>
+                    </select>
+                </td>
+                <td>
+                    <select v-model.number="form[i].visitor_score" :disabled="readOnly">
+                        <option :value="null">-</option>
+                        <option v-for="n in [0,1,2,3]" :key="`v${n}`" :value="n">{{ n }}</option>
+                    </select>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3">Total</td>
+                <td>{{ totalHome }}</td>
+                <td>{{ totalAway }}</td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
 
-.read-only {
-    opacity: 0.9;
-}
-
-.read-only select {
-    cursor: not-allowed;
-}
-</style>
+    <button
+        v-if="!readOnly"
+        class="btn-primary save"
+        @click="saveSets"
+        :disabled="!isValid"
+    >
+        Sauvegarder
+    </button>
+</template>

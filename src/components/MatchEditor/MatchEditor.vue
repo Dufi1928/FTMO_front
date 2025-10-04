@@ -79,19 +79,21 @@ function prevStep() { if (step.value > 1) step.value-- }
                         v-if="showAll"
                         :team1="team1"
                         :team2="team2"
-                        :matchId="match.id"
-                        :isHomeTeam="isHomeTeam"
+                        :match-id="match.id"
+                        :is-home-team="false"
                     />
                     <Step2M
                         :team1="team1"
                         :team2="team2"
                         :matchId="match.id"
+                        :is-home-team="false"
                         @next-step="() => {}"
                     />
                     <Step3D
                         :team1="team1"
                         :team2="team2"
                         :matchId="match.id"
+                        :is-home-team="false"
                         @next-step="() => {}"
                     />
                 </div>
@@ -104,6 +106,7 @@ function prevStep() { if (step.value > 1) step.value-- }
                     :team1="team1"
                     :team2="team2"
                     :matchId="match.id"
+                    :is-home-team="!showAll"
                     @next-step="nextStep"
                 />
                 <Step2M
@@ -111,6 +114,7 @@ function prevStep() { if (step.value > 1) step.value-- }
                     :team1="team1"
                     :team2="team2"
                     :matchId="match.id"
+                    :is-home-team="!showAll"
                     @next-step="nextStep"
                 />
                 <Step3D
@@ -118,6 +122,7 @@ function prevStep() { if (step.value > 1) step.value-- }
                     :team1="team1"
                     :team2="team2"
                     :matchId="match.id"
+                    :is-home-team="!showAll"
                     @next-step="nextStep"
                 />
 

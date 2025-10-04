@@ -34,7 +34,7 @@ html, body {
 
 /* =============== CONTENEUR INTÉRIEUR =============== */
 .container {
-    width: 80%;
+    width: 90%;
     max-width: 1440px;
     display: flex;
     justify-content: space-between;
