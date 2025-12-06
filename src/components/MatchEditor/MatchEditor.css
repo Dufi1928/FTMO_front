@@ -155,3 +155,10 @@
         color:#b24747;
     }
 }
+
+.actions-row {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 16px;
+}

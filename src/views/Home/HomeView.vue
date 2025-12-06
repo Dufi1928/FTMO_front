@@ -17,7 +17,10 @@ const cities = ref([])
 const loading = ref(true)
 const errorMsg = ref('')
 const matches = ref([])
+
+/* Nouveau: classement issu de l'API dédiée */
 const ranking = ref([])
+const rankingCriteria = ref([])
 
 async function fetchAllMatches() {
     loading.value = true
@@ -41,53 +44,50 @@ async function fetchAllMatches() {
         loading.value = false
     }
 }
-function buildRankingFromTeams(teams) {
-    const rows = teams.map((t) => {
-        const wonSets  = Number(t.total_points_scored)   || 0      // sets gagnés
-        const lostSets = Number(t.total_points_conceded) || 0      // sets perdus
-        const diff     = wonSets - lostSets
 
-        // Hypothèse de calcul des "Points" de classement :
-        // 2 pts par match gagné + 1 par match nul (ajuste si ta règle est différente)
-        const points = (Number(t.matches_won) || 0) * 2 + (Number(t.matches_drawn) || 0)
+// --- REMPLACEMENT: on utilise l’API classement-complet ---
+async function fetchRanking() {
+    try {
+        const res = await fetch('https://ftmo.bob-digital.com/api/matches/classement-complet/')
+        if (!res.ok) throw new Error('Impossible de charger le classement.')
+        const data = await res.json()
 
-        // Numéro d’équipe : adapte selon ta donnée (ici on met 1 par défaut)
-        const teamNo = t.team_admin ?? 1
+        rankingCriteria.value = Array.isArray(data?.criteria) ? data.criteria : []
 
-        return {
-            club: t.club_name,
-            teamNo,
-            points,
-            won: wonSets,
-            lost: lostSets,
-            diff
-        }
-    })
-    // tri du plus grand nombre de sets gagnés au plus petit
-    rows.sort((a, b) => b.won - a.won)
-    // attribution des rangs
-    rows.forEach((r, i) => (r.rank = i + 1))
-    ranking.value = rows
+        // Adapter le format pour l’affichage courant
+        const rows = Array.isArray(data?.standings) ? data.standings : []
+        ranking.value = rows.map(r => ({
+            rank: r.position,
+            club: r.team_name,
+            won: Number(r.sets_gained) || 0,
+            lost: Number(r.sets_lost) || 0,
+            diff: Number(r.sets_diff) || 0,
+            points: Number(r.table_points) || 0,
+            played: Number(r.played) || 0,
+            teamId: r.team_id
+        }))
+    } catch (e) {
+        console.error(e)
+        ranking.value = []
+    }
 }
 
-
-
+// ... existing code ...
 onMounted(async () => {
     try {
         const res = await fetch('https://ftmo.bob-digital.com/api/teams/')
         const data = await res.json()
-        // alimente le slider des clubs
         cities.value = data.map(team => ({
             name: team.club_name,
             image: team.image || 'src/assets/images/deulemont1.jpeg',
             slug: team.id,
         }))
-
-        // construit le ranking à partir de l’API
-        buildRankingFromTeams(data)
     } catch (err) {
         console.error('Erreur de chargement des clubs:', err)
     }
+
+    // Classement depuis l’API dédiée
+    await fetchRanking()
 
     fetchAllMatches()
 })
@@ -138,7 +138,7 @@ const upcomingMatches = computed(() => {
                 Notre mission est de promouvoir les valeurs sportives, l'esprit d'équipe et la pratique du tennis de
                 table pour tous, quel que soit l'âge ou le niveau.
             </p>
-<!--            <a href="" class="our-history-content-content-cta">En savoir plus</a>-->
+            <!--            <a href="" class="our-history-content-content-cta">En savoir plus</a>-->
         </div>
     </div>
     <div class="images-grid-container">
@@ -204,7 +204,6 @@ const upcomingMatches = computed(() => {
         />
 
         <div class="ranking-table-wrapper" id="rank-scroll">
-            <!-- table fixe (colonne Club) -->
             <div class="rank-pinned">
                 <table class="ranking-table ranking-left">
                     <thead>
@@ -219,7 +218,7 @@ const upcomingMatches = computed(() => {
                     </tbody>
                 </table>
             </div>
-            <!-- table scrollable -->
+
             <div class="rank-scroll">
                 <table class="ranking-table ranking-main">
                     <thead>
@@ -228,37 +227,39 @@ const upcomingMatches = computed(() => {
                         <th>Sets gagnés</th>
                         <th>Sets perdus</th>
                         <th>Différence</th>
+                        <th title="Points de table">Pts</th>
+                        <th>Joués</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     <tr v-for="row in ranking" :key="row.rank">
                         <td>
-            <span class="rank-badge"
-                  :class="{ gold:row.rank===1, silver:row.rank===2, bronze:row.rank===3 }">
-              {{ row.rank }}
-            </span>
+                          <span class="rank-badge"
+                                :class="{ gold:row.rank===1, silver:row.rank===2, bronze:row.rank===3 }">
+                            {{ row.rank }}
+                          </span>
                         </td>
                         <td class="won">{{ row.won }}</td>
                         <td class="lost">{{ row.lost }}</td>
                         <td :class="{ positive:row.diff>0, negative:row.diff<0 }">
                             {{ row.diff > 0 ? '+' + row.diff : row.diff }}
                         </td>
+                        <td>{{ row.points }}</td>
+                        <td>{{ row.played }}</td>
                     </tr>
                     </tbody>
-
                 </table>
             </div>
         </div>
+        <template>
+            <div class="map-container-home h-screen">
+                <MapClubsByPosition :show-filters="false"/>
+            </div>
+        </template>
     </div>
+    <!-- ... existing code ... -->
 
-    <template>
-        <div class="map-container-home h-screen">
-            <MapClubsByPosition :show-filters="false" />
-        </div>
-    </template>
     <Footer/>
-
-
 </template>
 

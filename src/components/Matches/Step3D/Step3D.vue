@@ -12,6 +12,25 @@ const props = defineProps({
         type: String,
         default: 'home',
         validator: v => ['home', 'away'].includes(v)
+    },
+    // Nouveau: indique si l’utilisateur est l’équipe à domicile (même logique que Step2M)
+    isHomeTeam: {
+        type: Boolean,
+        default: false
+    },
+    // Lecture seule globale (désactive toute modification comme à l'étape 2)
+    readOnly: {
+        type: Boolean,
+        default: false
+    },
+    // Ajout: états de validation actuels (fournis par le parent)
+    validationStatusHome: {
+        type: Boolean,
+        default: false
+    },
+    validationStatusAway: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -21,20 +40,39 @@ const FORFAIT = 'FORFAIT'
 const showSuccess = ref(false)
 const showValidated = ref(false)
 
+// Bouton "Refuser" (extérieur si domicile a validé)
+const showRejectButton = computed(() => {
+  const isAwayUser = !props.isHomeTeam
+  const validatedByHome = props.validationStatusHome === true
+  return isAwayUser && validatedByHome
+})
+
+// Bouton "Valider" (domicile si pas encore validé par domicile)
+const showValidateButton = computed(() => {
+  const isHomeUser = props.isHomeTeam
+  const notYetValidatedByHome = props.validationStatusHome !== true
+  return isHomeUser && notYetValidatedByHome
+})
+
 const form = ref([
     { match_identifier: 'D-M-M',   home_ids: [null, null], visitor_ids: [null, null], home_score: null, visitor_score: null },
     { match_identifier: 'D-M-M-2', home_ids: [null, null], visitor_ids: [null, null], home_score: null, visitor_score: null },
-    { match_identifier: 'D-M-J',   home_ids: [null, null], visitor_ids: [null, null], home_score: null, visitor_score: null },
     { match_identifier: 'D-M-F',   home_ids: [null, null], visitor_ids: [null, null], home_score: null, visitor_score: null },
+    { match_identifier: 'D-M-J',   home_ids: [null, null], visitor_ids: [null, null], home_score: null, visitor_score: null },
     { match_identifier: 'D-F-J',   home_ids: [null, null], visitor_ids: [null, null], home_score: null, visitor_score: null }
 ])
 
 /* ---------- Badges (affichage) ---------- */
 function requiredType () { return 'Joueur' }
 
+
+
 /* ---------- Options : non filtrées ---------- */
 function homeOptionsFor () { return Array.isArray(props.team1) ? props.team1 : [] }
 function awayOptionsFor () { return Array.isArray(props.team2) ? props.team2 : [] }
+
+const confirmValidateOpen = ref(false)
+const confirmRejectOpen = ref(false)
 
 /* ---------- Helpers ---------- */
 function includesForfait(arr) {
@@ -56,6 +94,7 @@ const toPair = (arr) => Array.isArray(arr)
 
 /* ---------- Sélection joueurs & FORFAIT ---------- */
 function onChangePlayers (i) {
+    if (props.readOnly) return
     const row = form.value[i]
     if (!row) return
 
@@ -170,6 +209,25 @@ function detectForfaitFromExisting (i) {
         normalizeForfait(i)
     }
 }
+function openRejectModal() {
+    confirmRejectOpen.value = true
+}
+
+async function onConfirmValidate() {
+    try {
+        await validateMatch()
+        confirmValidateOpen.value = false
+        showValidated.value = true
+        setTimeout(() => (showValidated.value = false), 2000)
+    } catch (e) {
+        emit('error', `Match enregistré, mais la validation a échoué : ${e.message}`)
+    }
+    emit('next-step')
+}
+function onCancelValidate() {
+    confirmValidateOpen.value = false
+    emit('next-step')
+}
 
 onMounted(async () => {
     const sets = await fetchExistingSets()
@@ -194,6 +252,7 @@ onMounted(async () => {
 watch(
     () => form.value.map(r => ({ h: r.home_score, v: r.visitor_score })),
     (newVals, oldVals) => {
+        if (props.readOnly) return
         newVals.forEach((val, i) => {
             // Ne pas appliquer les règles auto si forfait
             if (isForfaitRow(i)) return
@@ -216,6 +275,7 @@ watch(
 const formatErrors = (errs) => errs.map(e => `#${e.index}: ${JSON.stringify(e.error)}`).join('\n')
 
 async function saveSets () {
+    if (props.readOnly) return
     const payload = form.value.map(s => {
         const homeF = includesForfait(s.home_ids)
         const awayF = includesForfait(s.visitor_ids)
@@ -295,17 +355,8 @@ async function saveSets () {
         showSuccess.value = true
         setTimeout(() => (showSuccess.value = false), 2000)
 
-        const doValidate = window.confirm('Les scores ont été enregistrés. Voulez-vous valider le match maintenant ?')
-        if (doValidate) {
-            try {
-                await validateMatch()
-                showValidated.value = true
-                setTimeout(() => (showValidated.value = false), 2000)
-            } catch (e) {
-                emit('error', `Match enregistré, mais la validation a échoué : ${e.message}`)
-            }
-        }
-        emit('next-step')
+        // Ouvrir la modale de validation (pas de window.confirm, pas de next-step ici)
+        confirmValidateOpen.value = true
     } catch (err) {
         emit('error', err.message)
     }
@@ -313,6 +364,7 @@ async function saveSets () {
 
 /* -------- Validation du match -------- */
 async function validateMatch () {
+    if (props.readOnly) throw new Error('Action non autorisée en lecture seule.')
     const token = localStorage.getItem('accessToken')
     const headers = { 'Content-Type': 'application/json' }
     if (token) headers.Authorization = `Bearer ${token}`
@@ -336,10 +388,38 @@ async function validateMatch () {
         throw new Error(msg)
     }
 }
+/* -------- Dévalidation (refus) -------- */
+async function rejectValidation () {
+    // Appelé par la modale “Confirmer”
+    const token = localStorage.getItem('accessToken')
+    const headers = { 'Content-Type': 'application/json' }
+    if (token) headers.Authorization = `Bearer ${token}`
+
+    const body = { validation_status_home: false, validation_status_away: false }
+
+    const res = await fetch(`https://ftmo.bob-digital.com/api/matches/${props.matchId}/`, {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify(body)
+    })
+    if (!res.ok) {
+        let msg = 'Erreur lors du refus'
+        try {
+            const d = await res.json()
+            msg = d?.detail || msg
+        } catch {}
+        emit('error', msg)
+        return
+    }
+
+    confirmRejectOpen.value = false
+    showSuccess.value = true
+    setTimeout(() => (showSuccess.value = false), 2000)
+}
 </script>
 
 <template>
-    <div class="table-responsive">
+    <div class="table-responsive" :class="{ 'read-only': props.readOnly }">
         <table class="sets-table">
             <thead>
             <tr>
@@ -362,6 +442,7 @@ async function validateMatch () {
                             class="control-select"
                             v-model="form[i].home_ids[0]"
                             @change="onChangePlayers(i)"
+                            :disabled="props.readOnly"
                         >
                             <option :value="null">Sélectionner</option>
                             <option v-for="p in homeOptionsFor(i, 0)" :key="p.id" :value="String(p.id)">
@@ -376,6 +457,7 @@ async function validateMatch () {
                             class="control-select"
                             v-model="form[i].home_ids[1]"
                             @change="onChangePlayers(i)"
+                            :disabled="props.readOnly"
                         >
                             <option :value="null">Sélectionner</option>
                             <option v-for="p in homeOptionsFor(i, 1)" :key="p.id" :value="String(p.id)">
@@ -394,6 +476,7 @@ async function validateMatch () {
                             class="control-select"
                             v-model="form[i].visitor_ids[0]"
                             @change="onChangePlayers(i)"
+                            :disabled="props.readOnly"
                         >
                             <option :value="null">Sélectionner</option>
                             <option v-for="p in awayOptionsFor(i, 0)" :key="p.id" :value="String(p.id)">
@@ -408,6 +491,7 @@ async function validateMatch () {
                             class="control-select"
                             v-model="form[i].visitor_ids[1]"
                             @change="onChangePlayers(i)"
+                            :disabled="props.readOnly"
                         >
                             <option :value="null">Sélectionner</option>
                             <option v-for="p in awayOptionsFor(i, 1)" :key="p.id" :value="String(p.id)">
@@ -418,15 +502,23 @@ async function validateMatch () {
                     </div>
                 </td>
 
-                <!-- SCORES (bloqués si forfait) -->
+                <!-- SCORES -->
                 <td>
-                    <select class="control-select" v-model.number="form[i].home_score">
+                    <select
+                        class="control-select"
+                        v-model.number="form[i].home_score"
+                        :disabled="props.readOnly || isForfaitRow(i)"
+                    >
                         <option :value="null">-</option>
                         <option v-for="n in [0,1,2,3]" :key="`h${n}`" :value="n">{{ n }}</option>
                     </select>
                 </td>
                 <td>
-                    <select class="control-select" v-model.number="form[i].visitor_score">
+                    <select
+                        class="control-select"
+                        v-model.number="form[i].visitor_score"
+                        :disabled="props.readOnly || isForfaitRow(i)"
+                    >
                         <option :value="null">-</option>
                         <option v-for="n in [0,1,2,3]" :key="`v${n}`" :value="n">{{ n }}</option>
                     </select>
@@ -457,5 +549,53 @@ async function validateMatch () {
         </div>
     </transition>
 
-    <button class="btn-primary save" @click="saveSets" :disabled="!isValid">Valider</button>
+    <div class="actions-row">
+        <button
+            v-if="showRejectButton"
+            class="btn-secondary"
+            @click="openRejectModal"
+        >
+            Refuser
+        </button>
+
+        <button
+            v-if="showValidateButton"
+            class="btn-primary save"
+            @click="saveSets"
+            :disabled="!isValid"
+        >
+            Valider
+        </button>
+    </div>
+
+    <!-- Modal CONFIRM VALIDATION -->
+    <transition name="fade">
+        <div v-if="confirmValidateOpen" class="modal-backdrop" aria-modal="true" role="dialog">
+            <div class="modal-card">
+                <h3 class="modal-title">Valider le match ?</h3>
+                <p class="modal-text">Les scores ont été enregistrés. Voulez-vous valider le match maintenant ?</p>
+                <div class="modal-actions">
+                    <button class="step3d-btn step3d-btn-secondary" @click="onCancelValidate">Plus tard</button>
+                    <button class="step3d-btn step3d-btn-primary" @click="onConfirmValidate">Valider</button>
+                </div>
+            </div>
+        </div>
+    </transition>
+
+    <!-- Modal CONFIRM REJECT -->
+    <transition name="fade">
+        <div v-if="confirmRejectOpen" class="modal-backdrop" aria-modal="true" role="dialog">
+            <div class="modal-card">
+                <h3 class="modal-title">Refuser la feuille ?</h3>
+                <p class="modal-text">
+                    Si vous refusez, la feuille sera renvoyée pour remplissage à l’équipe receveuse.
+                    Confirmez-vous le refus ?
+                </p>
+                <div class="modal-actions">
+                    <button class="step3d-btn step3d-btn-secondary" @click="confirmRejectOpen = false">Annuler</button>
+                    <button class="step3d-btn step3d-btn-danger" @click="rejectValidation">Confirmer le refus</button>
+                </div>
+            </div>
+        </div>
+    </transition>
 </template>

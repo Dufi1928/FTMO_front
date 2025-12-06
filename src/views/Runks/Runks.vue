@@ -39,7 +39,9 @@ const teamColumns = [
     },
     { field: 'won', label: 'Sets gagnés', sortable: true, cellClass: 'won', color: '#12B221' },
     { field: 'lost', label: 'Sets perdus', sortable: true, cellClass: 'lost', color: '#D11B1B' },
-    { field: 'diff', label: 'Différence', sortable: true }
+    { field: 'diff', label: 'Différence', sortable: true },
+    { field: 'points', label: 'Pts', sortable: true },
+    { field: 'played', label: 'Joués', sortable: true }
 ]
 
 const playerColumns = [
@@ -110,6 +112,8 @@ const columns = computed(() => {
    Données classement
    ====================== */
 const ranking = ref([])
+const loading = ref(false)
+const errorMsg = ref('')
 
 function decorateAndSet(rows, nameField) {
     const mapped = rows.map(r => {
@@ -130,29 +134,41 @@ function decorateAndSet(rows, nameField) {
     ranking.value = mapped
 }
 
-function buildRankingFromTeams(teams) {
-    const rows = teams.map((t) => {
-        const wonSets = Number(t.total_points_scored) || 0
-        const lostSets = Number(t.total_points_conceded) || 0
-        return {
-            club: t.club_name,
-            won: wonSets,
-            lost: lostSets,
-            diff: wonSets - lostSets
-        }
-    })
-    decorateAndSet(rows, 'club')
+// ---------------------
+// Équipes: remplacer la source par classement-complet
+// ---------------------
+async function fetchTeamsRankingFromClassementComplet() {
+    loading.value = true
+    errorMsg.value = ''
+    try {
+        const res = await fetch('https://ftmo.bob-digital.com/api/matches/classement-complet/')
+        if (!res.ok) throw new Error('Erreur chargement classement équipes')
+        const data = await res.json()
+        const rows = Array.isArray(data?.standings) ? data.standings : []
+        ranking.value = rows.map(r => ({
+            club: r.team_name,
+            won: Number(r.sets_gained) || 0,
+            lost: Number(r.sets_lost) || 0,
+            diff: Number(r.sets_diff) || 0,
+            rank: Number(r.position),
+            points: Number(r.table_points) || 0,
+            played: Number(r.played) || 0
+        }))
+    } catch (e) {
+        console.error(e)
+        errorMsg.value = e?.message || 'Erreur inconnue.'
+        ranking.value = []
+    } finally {
+        loading.value = false
+    }
 }
 
+// ---------------------
+// Anciennes fonctions: on garde pour joueurs/doubles
+// ---------------------
 async function fetchTeamsRanking() {
-    try {
-        const res = await fetch(`${API_BASE}/teams/`)
-        const data = await res.json()
-        buildRankingFromTeams(data)
-    } catch (err) {
-        console.error('Erreur chargement classement équipes', err)
-        ranking.value = []
-    }
+    // redirige vers la nouvelle source
+    return fetchTeamsRankingFromClassementComplet()
 }
 
 function buildRankingFromPlayers(players) {
@@ -185,7 +201,7 @@ function buildRankingFromDoubles(results) {
 
     const teamOfFirstPlayer = (r) => {
         if (Array.isArray(r.player_ids) && r.player_ids.length && Array.isArray(r.players) && r.players.length) {
-            const firstId = [...r.player_ids].sort((a,b)=>a-b)[0]; // “premier” = plus petit id
+            const firstId = [...r.player_ids].sort((a,b)=>a-b)[0];
             const first = r.players.find(p => p.id === firstId) || r.players[0];
             return first?.team_name || '';
         }
@@ -225,7 +241,6 @@ function buildRankingFromDoubles(results) {
     decorateAndSet(rows, 'pair');
 }
 
-
 async function fetchCategoryRanking(tag) {
     try {
         const slug = tag.toLowerCase().replace(/\s+/g, '-')
@@ -252,12 +267,12 @@ async function fetchCategoryRanking(tag) {
    Lifecycle
    ====================== */
 onMounted(() => {
-    fetchTeamsRanking()
+    fetchTeamsRankingFromClassementComplet()
 })
 
 watch(activeTag, (tag) => {
     if (tag === 'EQUIPES') {
-        fetchTeamsRanking()
+        fetchTeamsRankingFromClassementComplet()
     } else {
         fetchCategoryRanking(tag)
     }
@@ -282,12 +297,15 @@ watch(activeTag, (tag) => {
             </li>
         </ul>
 
+        <div v-if="loading" class="ranking-loading">Chargement du classement…</div>
+        <div v-else-if="errorMsg" class="ranking-error">{{ errorMsg }}</div>
         <GenericRankingTable
-            v-if="ranking.length"
+            v-else-if="ranking.length"
             :columns="columns"
             :rows="ranking"
             :show-search="true"
             row_height="120"
+            title="Classement des Équipes"
         />
         <div v-else class="coming-soon">
             <p>Classement bientôt disponible</p>

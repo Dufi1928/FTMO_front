@@ -80,3 +80,109 @@
         width: 100%;
     }
 }
+
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: grid;
+    place-items: center;
+    z-index: 1000;
+}
+.modal-card {
+    width: min(520px, 92vw);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    padding: 20px;
+    animation: pop 0.15s ease-out;
+}
+.modal-title {
+    margin: 0 0 6px;
+    font-size: 18px;
+}
+.modal-text {
+    margin: 0 0 16px;
+    color: #334155;
+}
+.modal-actions {
+    display: flex;
+    gap: 10px;
+}
+.btn-danger {
+    background: #e11d48;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-danger:hover { background: #be123c; }
+
+@keyframes pop {
+    from { transform: translateY(6px); opacity: 0 }
+    to   { transform: translateY(0); opacity: 1 }
+}
+/* --- Boutons de modale isolés à Step3D --- */
+.step3d-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 700;
+    width: 50% !important;
+    font-size: 0.95rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
+    user-select: none;
+    will-change: transform;
+}
+.step3d-btn:active {
+    transform: translateY(1px);
+}
+
+/* Primaire (valider) – couleurs existantes: bleu primaire des pages */
+.step3d-btn-primary {
+    background: #3138aa;      /* rempli */
+    color: #fff;
+    border-color: #3138aa;
+    box-shadow: 0 6px 18px rgba(49, 56, 170, 0.25);
+}
+.step3d-btn-primary:hover {
+    background: #232985;
+    border-color: #232985;
+    box-shadow: 0 8px 22px rgba(35, 41, 133, 0.35);
+}
+.step3d-btn-primary:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Secondaire (annuler/plus tard) – palette rouge secondaire utilisée ailleurs mais isolée ici */
+.step3d-btn-secondary {
+    background: #eef2ff;      /* fond clair */
+    color: #b24747;           /* texte rouge */
+    border-color: #b24747;    /* bord rouge */
+}
+.step3d-btn-secondary:hover {
+    background: #b24747;      /* rempli rouge */
+    color: #eef2ff;           /* texte clair */
+    border-color: #b24747;
+}
+
+/* Danger (confirmer le refus) – rouge fort cohérent */
+.step3d-btn-danger {
+    background: #e11d48;      /* rempli */
+    color: #fff;
+    border-color: #e11d48;
+    box-shadow: 0 6px 18px rgba(225, 29, 72, 0.25);
+}
+.step3d-btn-danger:hover {
+    background: #be123c;
+    border-color: #be123c;
+    box-shadow: 0 8px 22px rgba(190, 18, 60, 0.35);
+}

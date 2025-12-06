@@ -261,6 +261,7 @@ onMounted(async () => {
                     :columns="playerColumns"
                     row_height="80"
                     :rows="playerRows"
+                    
                     width="100%"
                     title="Effectif & statistiques"
                     linkText="Voir tous les joueurs"

@@ -16,6 +16,8 @@ const team = reactive({
     email: '',
     image: null,
     image_large: null,
+    latitude: '',      // ajouté
+    longitude: '',     // ajouté
 })
 
 const previews = reactive({ image: null, image_large: null })
@@ -104,6 +106,8 @@ async function saveTeam() {
                     club_description_paragraph_1: team.club_description_paragraph_1,
                     club_description_paragraph_2: team.club_description_paragraph_2,
                     email: team.email || '',
+                    latitude: team.latitude || '',     // ajouté
+                    longitude: team.longitude || '',   // ajouté
                 }),
             })
         } else {
@@ -114,6 +118,8 @@ async function saveTeam() {
             fd.append('club_description_paragraph_1', team.club_description_paragraph_1 ?? '')
             fd.append('club_description_paragraph_2', team.club_description_paragraph_2 ?? '')
             if (team.email) fd.append('email', team.email)
+            if (team.latitude !== undefined) fd.append('latitude', String(team.latitude ?? ''))   // ajouté
+            if (team.longitude !== undefined) fd.append('longitude', String(team.longitude ?? '')) // ajouté
 
             // ⚠️ n’ajoute le 3e argument (filename) QUE si c’est un Blob/File
             if (hasNewImage)      fd.append('image', team.image, team.image.name || 'image')
@@ -222,6 +228,29 @@ async function deleteSchedule(sch) {
                     <label>Adresse</label>
                     <textarea rows="3" v-model="team.address" />
                 </div>
+
+                <!-- NOTICE LAT/LNG -->
+                <div class="form-group full">
+                        <div class="info-box">
+                        <strong >Important :</strong>
+                        Ces deux champs sont nécessaires pour que votre club soit visible
+                        sur la carte “Clubs près de chez vous”.
+                        Vous pouvez trouver la latitude et la longitude sur Google Maps :
+                        recherchez votre adresse, faites un clic droit sur l’emplacement,
+                        puis copiez les coordonnées affichées (par ex. “48.8566, 2.3522”).
+                        La première valeur est la latitude, la seconde la longitude.
+                    </div>
+                </div>
+
+                <!-- Latitude/Longitude -->
+                <div class="form-group">
+                    <label>Latitude</label>
+                    <input v-model="team.latitude" type="number" step="0.000001" placeholder="77" />
+                </div>
+                <div class="form-group">
+                    <label>Longitude</label>
+                    <input v-model="team.longitude" type="number" step="0.000001" placeholder="7.0" />
+                </div>
                 <!-- P1 -->
                 <div class="form-group full">
                     <label>Paragraphe 1</label>
@@ -291,7 +320,3 @@ async function deleteSchedule(sch) {
         />
     </div>
 </template>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;600;700&display=swap');
-</style>

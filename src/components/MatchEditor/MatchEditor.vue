@@ -74,29 +74,30 @@ function prevStep() { if (step.value > 1) step.value-- }
 
             <!-- MODE EMPILÉ (extérieur) -->
             <template v-if="showAll">
-                <div class="stack-mode">
-                    <Step1MJ
-                        v-if="showAll"
-                        :team1="team1"
-                        :team2="team2"
-                        :match-id="match.id"
-                        :is-home-team="false"
-                    />
-                    <Step2M
-                        :team1="team1"
-                        :team2="team2"
-                        :matchId="match.id"
-                        :is-home-team="false"
-                        @next-step="() => {}"
-                    />
-                    <Step3D
-                        :team1="team1"
-                        :team2="team2"
-                        :matchId="match.id"
-                        :is-home-team="false"
-                        @next-step="() => {}"
-                    />
-                </div>
+                <Step1MJ
+                    v-if="showAll"
+                    :team1="team1"
+                    :team2="team2"
+                    :match-id="match.id"
+                    :is-home-team="false"
+                />
+                <Step2M
+                    :team1="team1"
+                    :team2="team2"
+                    :matchId="match.id"
+                    :is-home-team="false"
+                    @next-step="() => {}"
+                />
+                <Step3D
+                    :team1="team1"
+                    :team2="team2"
+                    :matchId="match.id"
+                    :is-home-team="false"
+                    :readOnly="true"
+                    :validationStatusHome="match.validation_status_home"
+                    :validationStatusAway="match.validation_status_away"
+                    @next-step="() => {}"
+                />
             </template>
 
             <!-- MODE STEPPER (domicile) -->
@@ -128,7 +129,7 @@ function prevStep() { if (step.value > 1) step.value-- }
 
                 <div class="btn-row">
                     <button class="btn-secondary" @click="prevStep" v-if="step > 1">⬅ Retour</button>
-                    <button class="btn-primary btn-primary-step" @click="nextStep" v-if="step < 3">Suivant ➔</button>
+<!--                    <button class="btn-primary btn-primary-step" @click="nextStep" v-if="step < 3">Suivant ➔</button>-->
                 </div>
             </template>
         </div>
